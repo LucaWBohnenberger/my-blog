@@ -209,7 +209,7 @@ Na prática observamos apenas uma amostra de tamanho $n$. Assim, substituímos o
 $$
 E[Xy]
 \approx
-\frac{1}{n}X^Ty,
+\frac{1}{n}\\bar{X}^Ty
 $$
 
 e
@@ -217,23 +217,23 @@ e
 $$
 E[XX^T]
 \approx
-\frac{1}{n}X^TX.
+\frac{1}{n}\bar{X}^T\bar{X}
 $$
 
 Substituindo na equação anterior:
 
 $$
-\frac{1}{n}X^TX\hat{w}
+\frac{1}{n}\bar{X}^T\bar{X}\hat{w}
 =
-\frac{1}{n}X^Ty.
+\frac{1}{n}\bar{X}^Ty
 $$
 
 Multiplicando ambos os lados por $n$:
 
 $$
-X^TX\hat{w}
+\bar{X}^T\bar{X}\hat{w}
 =
-X^Ty.
+\bar{X}^Ty
 $$
 
 Finalmente,
@@ -242,41 +242,43 @@ $$
 \boxed{
 \hat{w}
 =
-(X^TX)^{-1}X^Ty.
+(\bar{X}^T\bar{X})^{-1}\bar{X}^Ty.
 }
 $$
 
+Aqui clocamos o - em cima das variaveis para indicar que são amostras da população
+ 
 ---
 
 ## Comparando as duas deduções
 
-Bom, como viram, na dedução via esperança assumimos explicitamente algo sobre o erro, que ele deve ser independente das variaveis preditoras. Ao passo de que a principio não assumimos nada sobre o erro quando deduzimos via otimização. Entretanto isso não é exatamente verdade
+Bom, como viram, na dedução via esperança assumimos explicitamente algo sobre o erro, que ele deve ser independente das variaveis preditoras. Ao passo de que a principio não assumimos nada sobre o erro quando deduzimos via otimização. Entretanto isso não é exatamente verdade.
 
 A ideia fundamental aqui é que Otimizar o Erro Quadrático e Garantir a Premissa de Ortogonalidade são, na verdade, duas faces da mesma moeda. Quando pedimos para um otimizador (como o Gradient Descent) minimizar a distância entre a previsão e o valor real, ele faz isso calculando derivadas. Relembrando, a formula do gradiente:
 
 $$ \frac{\partial}{\partial w} SSE(w) = -X^Ty + X^TXw $$ 
 
-E idendica a formula do erro pelo lado da esperança
+É idendica a formula onde usamos a ortogonalidade
 
 $$
 E[Xu] = E[Xy] - E[XX^T]w.
 $$
 
-E nesse momento, o que fizemos com o gradiente na perspectiva da otimização? Igualamos a zero
-Na perspectiva da otimização, isso apenas nos diz que queremos que o erro seja o menor possivel, e a principio, parece que estamos assumino apenas a condição fraca que a $E[u]=0$. Porem agora que sabemos que o gradiente é igual ao valor esperado do erro, podemos ver alguma relações interessantes:
+E nesse momento, o que fizemos com o gradiente na perspectiva da otimização? Igualamos a zero.
+Na perspectiva da otimização, isso apenas nos diz que queremos que o erro seja o menor possivel. Porem agora que sabemos que o gradiente é igual ao valor esperado do erro, podemos ver alguma relações interessantes:
 
 $$
 \begin{aligned}
 \frac{\partial}{\partial w} SSE(w) &= E[-Xu]\\
-\frac{\partial}{\partial w} SSE(w) &= -X^T\hat{u}
+\frac{\partial}{\partial w} SSE(w) &= -\bar{X}^T\bar{u}
 \end{aligned}
 $$
  
-Onde $\hat{u}$ são os residuos (pense nele como os erros concretos, que realmente aconteceram, e não o objeto teorico do erro)
-Considerando que igualamos $-X^T\hat{u}$ a 0, a unica forma disso ser possivel, é se $X$ e $\hat{u}$ forem ortogonais, isso é, possuirem correlação igual a 0, e caso não saiba, a formula $X^T\hat{u}$ é exatamente a formula da covariância multivarida. 
+Onde $\bar{u}$ são os residuos (pense nele como os erros concretos, que realmente aconteceram, e não o objeto teorico do erro)
+Considerando que igualamos $\bar{X}^T\hat{u}$ a 0, a unica forma disso ser possivel, é se $\bar{X}$ e $\bar{u}$ forem ortogonais, isso é, possuirem correlação igual a 0, e caso não saiba, a formula $\bar{X}^T\bar{u}$ é exatamente a formula da covariância multivarida. 
 
 
-Abaixo há um grafico interativo, onde ploto uma regressão linear com duas variaveis preditoras $X_1$, $X_2$ e uma terceira variavel alvo $y$. Esse espaço vetorial das nossas variaveis nos permite visualizar como existe um espaço de erro pelo simples fato de as variaveis preditoras não conseguirem apontar para a varivel alvo atraves de combinações lineares, dessa forma, podemos ver claramente que o erro é ortogonal as variaveis preditoras
+Abaixo há um grafico interativo, onde ploto uma regressão linear com duas variaveis preditoras $X_1$, $X_2$ e uma terceira variavel alvo $y$. Esse espaço vetorial das nossas variaveis nos permite visualizar como existe um espaço de erro pelo simples fato de as variaveis preditoras não conseguirem apontar para a varivel alvo atraves de combinações lineares, dessa forma, podemos ver claramente que o erro é ortogonal as variaveis preditoras.
 
  
 ```{python} 
@@ -351,6 +353,6 @@ fig.show()
 
 Com isso podemos ver que na realidade, em ambos os casos estamos assumindo exatamente os mesmos pressupostos, apesar de no início não parecer o caso.
 
-Um último detalhe interessante, como pudermos ver, não assumimos que o erro é gaussiano para chegar nesse resultado, acredito que muitas pessoas se confundam achando que a premissa de otimizar um modelo lienar com SSE, ou melhor, via a formula normal pressupoem estritamente isso, o que não é verdade. Entretanto, acredito que essa confusão seja devido ao [Teorema de Gauss-Markov](https://es.wikipedia.org/wiki/Teorema_de_Gauss-M%C3%A1rkov) que diz que caso o erro possua variância constante, nossa regressão linear é um BLUE (Best Linear Unbiased Estimator), e se assumirmos que todos os erros vem de uma mesma gaussiana, o erro possui variância constante.
+Um último detalhe interessante, como pudermos ver, não assumimos que o erro é gaussiano para chegar nesse resultado, acredito que muitas pessoas se confundam achando que a premissa de otimizar um modelo linear com SSE, ou melhor, via a formula normal pressupoem estritamente isso, o que não é verdade. Entretanto, acredito que essa confusão seja devido ao [Teorema de Gauss-Markov](https://es.wikipedia.org/wiki/Teorema_de_Gauss-M%C3%A1rkov) que diz que caso o erro possua variância constante, nossa regressão linear é um BLUE (Best Linear Unbiased Estimator), e se assumirmos que todos os erros vem de uma mesma gaussiana, o erro possui variância constante.
 
 Nota: Existe um outro teorema, chamado [Teorema de Rao-Blackwell](https://en.wikipedia.org/wiki/Rao%E2%80%93Blackwell_theorem), que segundo ele, caso o erro siga uma gaussiana, a formula normal não apenas nos garante um BLUE, como um BUE (Best Unbiased Estimator)
