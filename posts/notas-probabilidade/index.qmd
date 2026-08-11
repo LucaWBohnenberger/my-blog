@@ -4,7 +4,7 @@ title: "De onde vem as fórmulas de probabilidade?"
 author: "Luca WB"
 date: "2026-05-28"         
 date-modified: last-modified 
-categories: [scratch, pt, math, probability]
+categories: [scratch, pt, math, probability, WIP]
 toc: true
 toc-location: right
 ---
@@ -13,7 +13,7 @@ toc-location: right
 
 Durante minha gradução, a cadeira de probabilidade foi dada de forma muito mecânica, onde apenas apareciam fórmulas mágicas que supostamente calculavam a probabilidade, mas eu não fazia ideia do porque, então fui aos livros estudar e descobri como elas foram construidas e porque funcionavam, e isso me fascinou bastante. Por isso decidi compilar uma versão bem resumida dos meus estudos, para que outras pessoas que já tiveram a mesma experiência que eu, possam ter uma visão geral de como a probabilidade é construída, e porque as fórmulas que aprendemos na graduação funcionam.
 
-Esse material foi construido com base em minhas notas de estudos do livro do Sheldon Ross, "Probabilidade, Um curso moderno com aplicações". Os conteudos aqui apresentados serão com base nos capitulos 1 a 4 do livro, alguns problemas nesse post serão de problemas famosos, e outros serão releitura de alguns exercicios do livro. Recomendo fortemente a leitura dele para quem quiser se aprofundar mais em probabilidade a nível de graduação. Não usarei necessáriamente a mesma notação do livro, e nem as mesmas demonstrações, mas a ideia é a mesma, apenas de uma forma mais resumida e com exemplos mais simples. Na seção de contagem, trarei uma abordagem diferente da do livro que considero mais intuitiva.
+Esse material foi construido com base em minhas notas de estudos do livro do Sheldon Ross, "Probabilidade, Um curso moderno com aplicações". Os conteudos aqui apresentados serão com base nos capitulos 1 a 4 do livro, alguns problemas nesse post serão de problemas famosos, e outros serão releitura de alguns exercicios do livro. Recomendo fortemente a leitura dele para quem quiser se aprofundar mais em probabilidade a nível de graduação. Não usarei necessáriamente a mesma notação do livro, e nem as mesmas demonstrações, mas a ideia é a mesma, apenas de uma forma mais resumida e com exemplos mais simples. Na seção de contagem, trarei uma abordagem diferente da do livro, que considero mais intuitiva.
 
 Pré-requisitos: Não é essencial ter feito uma cadeira de probabilidade, ainda que seja interesante. O pré-requisito real aqui é ter uma noção miníma de teoria dos conjuntos. Também é bom ter uma noção de combinatória básica e sobre limites, ainda que não seja essencial.
 
@@ -317,3 +317,4 @@ Da mesma forma que no exemplo C, temos que multiplicar o numerador pela quantida
 
 Note que nesses exemplos, sempre me dei ao trabalho de definir claramente qual era o evento em que eu estava cálculando, sempre define o A. Para esses exemplos, isso pode parecer preciosimo matemático, e realmente é. Entretanto, para problemas mais complexos, é muito fácil se perder nos cálculos se não definir direito seus eventos. Por tanto, mesmo que seja chato, SEMPRE defina claramente seus eventos. A importancia disso ficará mais clara quando chegarmos em probabilidade condicional, mas já é bom tornar isso um hábito.
 
+W.I.P.

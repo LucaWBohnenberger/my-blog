@@ -10,13 +10,13 @@ categories: [scratch, en, code, math, nn]
 
 The goal of this page is to understand how to implement a neural network from scratch without any external libraries. I'll consider that you already have some 
 basic knowledge of Artificial Neural Networks. The main reason for doing this is to demystify the black box of Neural Networks. 
-For this project, the main resource (though not the only one) is this awesome [video](https://www.youtube.com/watch?v=VMj-3S1tku0&list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ) from Andrej Karpathy. I will cover how to implement AutoGrad for backpropagation. By the end of this post, you will be capable of creating MLPs from scratch!
+For this project, the main resource (though not the only one) is this awesome [video](https://www.youtube.com/watch?v=VMj-3S1tku0&list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ) from Andrej Karpathy. I will cover how to implement autograd for backpropagation. By the end of this post, you will be capable of creating MLPs from scratch!
 
 
 ## Basic knowledge of derivative
 
-To make sense at how an NN train and learns, you first need a solid understand of what a derivative is.
-A derivative is an operation that gives us a formula that describes the slope of a function as it modifies a variable, but for out propose, we will only work with functions that generate linear derivatives. Thus, for the function $f(x) = 3x^2 - 4x + 5$, see the graph below.
+To make sense of how an NN trains and learns, you first need a solid understanding of what a derivative is.
+A derivative is an operation that gives us a formula that describes the slope of a function as it modifies a variable, but for our purpose, we will only work with functions that whose derivatives are linear functions. Thus, for the function $f(x) = 3x^2 - 4x + 5$, see the graph below.
 ```{python}
 #| code-fold: true
 #| code-summary: "Show Python code"
@@ -44,7 +44,7 @@ plt.grid(True)
 plt.show()
 ```
 
-This function is easy to understand and derivate analytic, the derivate is $\frac{df(x)}{dx} = 6x - 4$. Plotting both function and his derivate, we get the graphic below.
+This function is easy to understand and differentiate analytically, the derivative is $\frac{df(x)}{dx} = 6x - 4$. Plotting both function and its derivative, we obtain the graph below.
 ```{python}
 #| code-fold: true
 #| code-summary: "Show Python code"
@@ -77,9 +77,9 @@ plt.grid(True)
 plt.show()
 ```
 
-The basic idea is that with we want to minimize the value of a function (main objective in deep learning), we just need to see the value of a derivative in some point A, that give us all the information we need to go to the minimum spot. Just do some numerical example, in the graph above, note that the minimum spot is in some value around 0 and 2, more close to 0 (precisely 2/3), so, just pick some random number, like -2, the value of $f(x)$ with -2 is 25, and the derivative is -16. The number -16 represent 
-the rate at which the function varies for each increase in the value of x at that point in specific. So, with we increase the value of X a little bit, we can lower the value
-of X, so probably, the $f(-1.999)$ give us a lower value than $f(-2)$
+The basic idea is that if we want to minimize the value of a function (main objective in deep learning), we just need to look at the value of its derivative at some point A, which tells us which direction to move to reduce the function value. Let's look at a numerical example, in the graph above, note that the minimum point is in some value between 0 and 2, closer to 0 (precisely 2/3), so, just pick some random number, like -2, the value of $f(x)$ with -2 is 25, and the derivative is -16. The number -16 represents 
+the rate at which the function varies for each increase in the value of x at that specific point. So, if we increase the value of $x$ a little bit, we can lower the value
+of $f(x)$, so probably, the $f(-1.999)$ give us a lower value than $f(-2)$
 ```{python}
 def f(x):
     return 3*x**2 - 4*x + 5
@@ -88,15 +88,15 @@ print("f(-2)=",f(-2))
 print("f(-1.999)=",f(-1.999))
 ```
 
-This is the general idea of how we can minimize some function, that is also the main idea of how gradient descendent works.
+This is the general idea of how we can minimize some function, that is also the main idea of how gradient descent works.
 
 
 ## How to estimate gradients
 
-In general, to make an framework for working with nn, its just an AutoGrad (a tool that can do differentiation automatically) and some fancy stuff for make more practical.
+In general, to build a framework for working with nn (neural networks), it's just an autograd (a tool that can do differentiation automatically) and some fancy stuff to make everything more practical.
 
-For start, lets make things the most simple for now. Our goal its make an class that can calc for us all the gradients (its the same as an derivative) from the function
-$L = -2 \cdot \big((2 \cdot 3) + 10\big)$. But we don't are comfortable derivate something with just numbers, so lets consider in this way the function:
+To start, let's make things the most simple for now. Our goal its make a class that can compute for us all the gradients (A gradient is the derivative of the final output with respect to a specific value in the computation graph. It tells us how sensitive the output is to changes in that value, but for now, you can think of it as the slope of the function at that point) from the function
+$L = -2 \cdot \big((2 \cdot 3) + 10\big)$. But we aren't comfortable differentiate something with just numbers, so lets consider in this way the function:
 ```{python}
 a = 2
 b = -3.0
@@ -108,8 +108,8 @@ L = d * f
 L
 ```
 
-Just to make clear, the knowledge that we want with this, is ow much changes in the final result, increase the values of any of the variables a little
-To get the gradients, we can use an approximate that consists in adding a very small number $h$ is all of the values, than subtract the new with the original, and divide by the $h$. The code below shows how to do this with the variable $a$:
+Just to make it clear, the knowledge that we want with this, is how much the final result changes if we increase the values of any of the variables a little.
+To get the gradients, we can use an approximate that consists in adding a very small number $h$ to one of the values, than subtract the new with the original, and divide by the $h$. The code below shows how to do this with the variable $a$:
 ```{python}
 a = 2
 b = -3.0
@@ -133,13 +133,13 @@ print(f"L({a}) = {L2}")
 print(f"The slope/gradient: {(L2 - L)/h}")
 ```
 
-We will not use this method to create our autograd, but we can use this to verify with our gradients are right.
+We will not use this method to create our autograd, but we can use this to verify if our gradients are right.
 
 
 
-## Lets making a simple AutoGrad
+## Let's make a simple AutoGrad
 
-The basic idea of the AutoGrad we will make is make some very simple nodes, that represent the number in our calculation and will track all the last two nodes that make him. Basically, in $L = -2 \cdot \big((2 \cdot 3) + 10\big)$, we will consider that a node can only save on number, like in the code representation
+The basic idea behind the autograd engine we are going to build is to make some very simple nodes, that represent the numbers in our calculation and will track all the last two nodes that create it. Basically, in $L = -2 \cdot \big((2 \cdot 3) + 10\big)$, we will consider that a node can only store one number, like in the code representation
 ```{python}
 a = 2
 b = -3.0
@@ -150,13 +150,13 @@ d = e + c
 L = d * f
 ```
 
-So, for start, lets make the basic of our class:
+So, to start, let's make the basic of our class:
 ```{python}
 class Value:
     def __init__(self, data, _children=(), _op="", label=""):
         self.data = data
         self.grad = 0 # All nodes will start with no grad, because we don't know what is the grad (and for other math reason will explain soon)
-        self._prev = set(_children) # Don't worry about this for know, we only use set for a little bit better performance
+        self._prev = set(_children) # Don't worry about this for now, we only use set for a little bit better performance
         self._op = _op # To save the operation, its useful for debug
         self.label = label # You can ignore this, its just for the graphs I make below
 
@@ -165,7 +165,7 @@ class Value:
         return f"Value(data={self.data})"
 ```
 
-So with this class, we can create some Value's, but we cant use them for anything, so lets make some operations
+So with this class, we can create some Value's, but we can't use them for anything, so lets make some operations
 
 ```{python}
 class Value:
@@ -191,7 +191,7 @@ class Value:
         return out
 ```
 
-And with this simples class, we can know calc our formula (not the gradients yet)
+And with this simples class, we can know compute our formula (not the gradients yet)
 
 ```{python}
 a = Value(2., label="a")
@@ -204,7 +204,7 @@ L = d * f; L.label="L"
 L
 ```
 
-This calculation is known as pass forward
+This calculation is known as forward pass
 Below, simply make a graph to visualize the operations (note that the operator is not a real node, but to visualize this it is better). The question is: how can we get the gradients for $L$, $d$ and $f$?
 ```{python}
 #|echo: False
@@ -228,16 +228,13 @@ def trace(root):
 from IPython.display import display, HTML
 
 def draw_dot(root):
-    # Removi o 'size' forçado. Adicionei ranksep e nodesep para dar um respiro visual.
     dot = Digraph(format='svg', graph_attr={'rankdir': 'LR', 'ranksep': '0.5', 'nodesep': '0.5'}) 
     
     nodes, edges = trace(root)
     for n in nodes:
         uid = str(id(n))
-        # shape='record' é perfeito para mostrar dados e gradientes juntos
         dot.node(name=uid, label="{%s| data %.4f | grad %.4f }" % (n.label, n.data, n.grad), shape='record')
         if n._op:
-            # Cria o nó da operação (menor)
             dot.node(name=uid + n._op, label=n._op)
             dot.edge(uid + n._op, uid)
     
@@ -284,12 +281,12 @@ display(HTML(html))
 
 ```
 
-Now its start being interesting, we want to calc the gradient of $e$ and $c$ in relation of $L$. From the chain of rule, we have the expression below: 
+Now it starts to get interesting, we want to compute the gradient of $e$ and $c$ with respect to $L$. From the chain of rule, we have the expression below: 
 $$
 \frac{\partial L}{\partial e} = \frac{\partial L}{\partial d} \cdot \frac{\partial d}{\partial e}
 $$
-Bascially, it´s saying that the gradient of $e$ in relation with $L$ it´s just the gradient of $d$ in relation with $L$ time $e$ in relation with $d$. This mean
-that we only have to calc the local gradient $\frac{\partial d}{\partial e}$ because we already have calc the $\frac{\partial L}{\partial d}$ and its save in d.grad. The same with $c$ it´s true.
+Bascially, it´s saying that the gradient of $e$ in relation with $L$ it´s just the gradient of $d$ with respect to $L$ time $e$ with respect to $d$. This mean
+that we only have to compute the local gradient $\frac{\partial d}{\partial e}$ because we already computed the $\frac{\partial L}{\partial d}$ and its save in d.grad. The same with $c$ it´s true.
 So, from calculus, the gradient from an expression like $f(x,y) = x + y$ its 1 for both $x$ and $y$. Thus, we have
 
 $$
@@ -304,7 +301,7 @@ $$
 $$
 
 
-This is the strong concept that make the AutoGrad work, we only need to calc the local gradient and multiply with the gradient from the father of nodes (because the gradient of the father already is in relation with the last node).
+This is the strong concept that make the AutoGrad work, we only need to compute the local gradient and multiply with the gradient from the parent of nodes (because the gradient of the parent already is in relation with the last node).
 
 ``` {python}
 #|echo: False
@@ -345,12 +342,12 @@ html = f"""
 display(HTML(html))
 ```
 
-This is a complete backward pass manual, know we need to make a code to this automatically for us
+This is a complete backward pass manual, now we need to make a code to this automatically for us
 
 ### Automatically backward pass
 
-To do this automatically, you probably noticed that we need to start from the last node and work backwards (from the last to the first). The reverse order is necessary because for calculate the gradient of any node, we need the local gradient of the variable, and the gradient of the father, the unique exception is the last node, because its gradient always will be 1.
-he way we will implement this is by making each node responsible for calculating and passing the gradients down to its children. Let's see how this works for the multiplication (mul) function::
+To do this automatically, you probably noticed that we need to start from the last node and work backwards (from the last to the first). The reverse order is necessary because to calculate the gradient of any node, we need the local gradient of the variable, and the gradient of the parent, the only exception is the last node, because its gradient always will be 1.
+The way we will implement this is by making each node responsible for calculating and passing the gradients down to its children. Let's see how this works for the multiplication (mul) function::
 ```{python}
 class Value:
     def __init__(self, data, _children=(), _op="", label=""):
@@ -376,7 +373,7 @@ class Value:
         return out
 ```
 
-Lets check with this can calc the gradients of $d$ and $f$
+Lets check if this can compute the gradients of $d$ and $f$
 ```{python}
 #| echo : False
 class Value:
@@ -467,7 +464,7 @@ class Value:
         return out
 ```
 
-Lets check with we can calc all the gradients:
+Lets check with we can compute all the gradients:
 ``` {python}
 a = Value(2., label="a")
 b = Value(-3.0, label="b")
@@ -600,7 +597,7 @@ print(f"Grad of b: {b.grad}") # Should be -4.0 (a.data * e.grad -> 2 * -2)
 print(f"Grad of a: {a.grad}") # Should be 6.0 (b.data * e.grad -> -3 * -2)
 ```
 
-It´s worked perfectly again, know we already have a functional AutoGrad system, know, it´s just need to add more operations and we will be capable of create our propely framework of Deep Learning using our own AutoGrad. Before going to the next part, see the code bellow, its the same that we create together, but
+It´s worked perfectly again, know we already have a functional AutoGrad system, now it´s just need to add more operations and we will be capable of creating our propely framework of Deep Learning using our own AutoGrad. Before going to the next part, see the code bellow, its the same that we create together, but
 with some little changes, try to figure out what they're for (Hint, they're important for the next part)
 ``` {python}
 class Value:
@@ -809,7 +806,7 @@ Works, lets move on.
 
 ### Building a Layer
 
-So, we already create an simple Neuron, now, we just need to line them up for make a Layer.
+So, we already create an simple Neuron, now, we just need to line them up to make a Layer.
 
 ```{python}
 class Layer:
@@ -838,7 +835,7 @@ $$
 \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
 $$  
 
-Note that there is 3 operations that we don't implement to make this, so, lets implement them. For know, I presume that you understand how to implement this, so, try your self, you can search in google for this, just don't use an llm.
+Note that there is 3 operations that we don't implement to make this, so, lets implement them. For now, I presume that you understand how to implement this, so, try your self, you can search in google for this, just don't use an llm.
 
 ```{python}
 #| code-fold: true
@@ -893,7 +890,7 @@ class MLP:
         return out
 ```
 
-And, its finish, just need to test now
+And it's finished, just need to test now
 
 ```{python}
 nn = MLP(3, [6,6,1])
@@ -920,7 +917,7 @@ for i in range(100):
 
 ```
 
-To implement the train loop, we will need one more thing, there is an loss functions, this is just an metric that describes how well our model are fitting in data. For these case, we will use Mean Squared Error, so the steps for the training loop, its, calc the prediction, calc the loss, calc the gradients, subtract the gradients from the weights, reset the gradients values (our code accumulate the gradients) and do it again, and again.
+To implement the train loop, we will need one more thing, there is an loss functions, this is just an metric that describes how well our model are fitting in data. For these case, we will use Mean Squared Error, so the steps for the training loop, its, compute the prediction, compute the loss, compute the gradients, subtract the gradients from the weights, reset the gradients values (our code accumulate the gradients) and do it again, and again.
 
 ``` {python}
 #| cache: true
@@ -930,7 +927,7 @@ for i in range(50): # Our code will do 50 epochs of training
     y_pred = [ann(x) for x in X] # Our model only accept one prediction per time
     loss = sum((pred-origin)**2 for pred,origin in zip(y_pred, y)) * (Value((len(y))) ** -1) # You can implement the division operator or do it this way
 
-    loss.backward() # Calc of gradients  
+    loss.backward() # compute of gradients  
 
     for p in ann.parameters(): 
         p.data = p.data - 0.01*p.grad # Updating weights, we multiply the gradient by a small number called learning rate, we do this for not have problems with model convergence
@@ -940,7 +937,7 @@ for i in range(50): # Our code will do 50 epochs of training
 ```   
 
 
-Work, it's probability possible to improve this changing the activation function by an ReLU. But for our propose, it's good enough. Lets just see the values coming from our model
+Work, it's probably possible to improve this changing the activation function by an ReLU. But for our purpose, it's good enough. Lets just see the values coming from our model
 
 ``` {python}
 #| cache: true
