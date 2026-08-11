@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Luca WB">
+<meta name="dcterms.date" content="2026-05-28">
+
+<title>De onde vem as fórmulas de probabilidade? – My Studies</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">My Studies</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Luca Wolffenbuttel Bohnenberger</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/LucaWBohnenberger/my-blog"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">De onde vem as fórmulas de probabilidade?</h1>
+            <p class="subtitle lead">Uma construção axiomática da probabilidade com exemplos</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">scratch</div>
+                <div class="quarto-category">pt</div>
+                <div class="quarto-category">math</div>
+                <div class="quarto-category">probability</div>
+                <div class="quarto-category">WIP</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Luca WB </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 28, 2026</p>
+      </div>
+    </div>
+    
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">August 11, 2026</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#breve-introdução" id="toc-breve-introdução" class="nav-link active" data-scroll-target="#breve-introdução">Breve introdução</a></li>
+  <li><a href="#o-básico-sobre-contar" id="toc-o-básico-sobre-contar" class="nav-link" data-scroll-target="#o-básico-sobre-contar">O básico sobre contar</a>
+  <ul class="collapse">
+  <li><a href="#permutação" id="toc-permutação" class="nav-link" data-scroll-target="#permutação">Permutação</a></li>
+  <li><a href="#combinação" id="toc-combinação" class="nav-link" data-scroll-target="#combinação">Combinação</a></li>
+  </ul></li>
+  <li><a href="#axiomas-da-probabilidade" id="toc-axiomas-da-probabilidade" class="nav-link" data-scroll-target="#axiomas-da-probabilidade">Axiomas da Probabilidade</a>
+  <ul class="collapse">
+  <li><a href="#teorema-1" id="toc-teorema-1" class="nav-link" data-scroll-target="#teorema-1">Teorema 1</a></li>
+  <li><a href="#teorema-2" id="toc-teorema-2" class="nav-link" data-scroll-target="#teorema-2">Teorema 2</a></li>
+  <li><a href="#alguns-problemas" id="toc-alguns-problemas" class="nav-link" data-scroll-target="#alguns-problemas">Alguns problemas</a></li>
+  </ul></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="index.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="breve-introdução" class="level2">
+<h2 class="anchored" data-anchor-id="breve-introdução">Breve introdução</h2>
+<p>Durante minha gradução, a cadeira de probabilidade foi dada de forma muito mecânica, onde apenas apareciam fórmulas mágicas que supostamente calculavam a probabilidade, mas eu não fazia ideia do porque, então fui aos livros estudar e descobri como elas foram construidas e porque funcionavam, e isso me fascinou bastante. Por isso decidi compilar uma versão bem resumida dos meus estudos, para que outras pessoas que já tiveram a mesma experiência que eu, possam ter uma visão geral de como a probabilidade é construída, e porque as fórmulas que aprendemos na graduação funcionam.</p>
+<p>Esse material foi construido com base em minhas notas de estudos do livro do Sheldon Ross, “Probabilidade, Um curso moderno com aplicações”. Os conteudos aqui apresentados serão com base nos capitulos 1 a 4 do livro, alguns problemas nesse post serão de problemas famosos, e outros serão releitura de alguns exercicios do livro. Recomendo fortemente a leitura dele para quem quiser se aprofundar mais em probabilidade a nível de graduação. Não usarei necessáriamente a mesma notação do livro, e nem as mesmas demonstrações, mas a ideia é a mesma, apenas de uma forma mais resumida e com exemplos mais simples. Na seção de contagem, trarei uma abordagem diferente da do livro, que considero mais intuitiva.</p>
+<p>Pré-requisitos: Não é essencial ter feito uma cadeira de probabilidade, ainda que seja interesante. O pré-requisito real aqui é ter uma noção miníma de teoria dos conjuntos. Também é bom ter uma noção de combinatória básica e sobre limites, ainda que não seja essencial.</p>
+</section>
+<section id="o-básico-sobre-contar" class="level2">
+<h2 class="anchored" data-anchor-id="o-básico-sobre-contar">O básico sobre contar</h2>
+<p>Antes de nos adentrarmos em probabilidade, é importante saber contar as coisas, e isso é algo que a maioria das pessoas tem dificuldade, então vamos começar por aqui.</p>
+<p>Primeiro de tudo, contar possui dois principios fundamentais, o principio da adição e o principio da multiplicação. O principio da adição diz que se temos dois conjuntos de coisas, e eles não possuem interseção, ou seja, não possuem elementos em comum, então a quantidade total de coisas é a soma das quantidades de cada conjunto. Já o principio da multiplicação diz que se temos um processo que ocorre em etapas, e cada etapa possui uma quantidade fixa de possibilidades, então a quantidade total de possibilidades é o produto das quantidades de cada etapa.</p>
+<p>Para formalizar:</p>
+<ul>
+<li><p>Princípio da adição: Se A e B são conjuntos disjuntos, então |A ∪ B| = |A| + |B|</p></li>
+<li><p>Princípio da multiplicação: Se um processo ocorre em n etapas, e cada etapa possui <span class="math inline">\(k_i\)</span> possibilidades, então a quantidade total de possibilidades é <span class="math inline">\(\prod_{i=1}^{n} k_i\)</span></p></li>
+</ul>
+<p>Agora que disse um monte de coisas, vamos por um pouco de intuição nisso. Primeiro sobre o PA (a partir de agora chamarei o principio da adição de PA e o principio da multiplicação de PM), ele é bastante simples, ele funciona da seguinte forma, se precisamos escolher entre coisas mutuamente exclusivas, isso é, escolher uma coisa OU outra, nos somamos as possibilidades. Por exemplo no seguinte problema:</p>
+<p>João tem que escolher o que comer, há 3 tipos de sorvete e 2 de bolo, quantas opções de sobremesa ele tem? <span class="math display">\[
+3 + 2 = 5 \quad \text{(PA)}
+\]</span></p>
+<p>Bastente simples, não?</p>
+<p>Agora sobre o principio da multiplicação, ele funciona quando fazemos experimentos (um experimento é um processo onde gera algum resultado entre várias possibilidades) sequenciais, ou seja, quando podemos combinar os resultados de um experimento com o outro. Veja no exemplo abaixo:</p>
+<p>João tem que escolher o que comer, há 3 tipos de sorvete e 2 caldas diferentes para colocar no sorvete, quantas opções de sobremesa ele tem? <span class="math display">\[
+3 \times 2 = 6 \quad \text{(PM)}
+\]</span></p>
+<p>Com esses dois principios, podemos contar quase qualquer coisas, mas ainda são ferramentas muito básicas, abaixo vamos derivar alguns casos especiais que são uteis de saber.</p>
+<section id="permutação" class="level3">
+<h3 class="anchored" data-anchor-id="permutação">Permutação</h3>
+<p>Se temos 3 letras, A, B e C, quantas formas diferentes podemos organizá-las? Pelo principio da multiplicação, na primeia letra temos 3 opções, na segunda letra temos 2 opções (pois já escolhemos uma letra para a primeira), e na terceira letra temos apenas 1 opção (pois já escolhemos as outras duas), então o total de formas diferentes de organizar as letras é: <span class="math display">\[
+3 \times 2 \times 1 = 6 \quad \text{(PM)}
+\]</span></p>
+<p>As combinações possíveis: ABC, ACB, BAC, BCA, CAB e CBA.</p>
+<p>Note que o calculo acima, é o mesmo que calcular o fatorial de 3, ou seja, <span class="math inline">\(3!\)</span>. Dessa forma, se temos n objetos distintos, o número de formas diferentes de organizá-los é dado por <span class="math inline">\(n!\)</span>.</p>
+<p>Ex.1: Quantas formas diferentes podemos organizar as letras da palavra “Claudio”?</p>
+<p>Via a formula da permutação, temos que o número de formas diferentes de organizar as letras é dado por <span class="math inline">\(7!\)</span></p>
+<p>Agora vamos complicar um pouco as coisas, acima o raciocineo é valido porque todas as letras são distintas, mas e se tivermos letras repetidas?</p>
+<p>Ex.2: De quantas formas diferentes podemos organizar as letras da palavra “Claudia”?</p>
+<p>A formula da permutação, não é mais valida, pois a letra a é repetida, se usarmos a formula da permutação, contaremos por exemplo Claudia duas vezes, pois consideramos cada “a” diferente um do outro, ainda que não sejam. Então como resolver?</p>
+<p>O truque consiste em pensar em quantas vezes estamos contando a mesma coisa, nosso objetivo é sempre contar exatamente uma vez cada arranjo (combinação). Então, como temos uma letra só repetida uma unica vez, nós sempre iremos contar a mesma coisa duas vezes, veja abaixo um exemplo:</p>
+<ol type="1">
+<li><span class="math inline">\(Cla_1udia_2\)</span></li>
+<li><span class="math inline">\(Cla_2udia_1\)</span></li>
+</ol>
+<p>Então, para corrigir isso, basta contarmos a permutação total, e dividir por 2: <span class="math display">\[
+\frac{7!}{2} \quad \text{(PM)}
+\]</span></p>
+<p>Agora, e se tivermos mais de uma letra repetida? Para isso temos a formula geral da permutação com repetição</p>
+<p>Permutação com repetição: Se temos n objetos, onde <span class="math inline">\(n_1\)</span> são idênticos, <span class="math inline">\(n_2\)</span> são idênticos, …, <span class="math inline">\(n_k\)</span> são idênticos, então o número de formas diferentes de organizá-los é dado por: <span class="math display">\[
+\frac{n!}{n_1! \times n_2! \times ... \times n_k!} \quad \text{(PM)}
+\]</span></p>
+<p>Mas porque é assim? No exercicio anterior, o pensamento de quantas vezes estamos contando a mesma coisa, pode ser pensado sob a ótica de “De quantas formas posssiveis podemos trocar de lugar as letras repetidas sem mudar o arranjo?” Se temos uma letra repetida n vezes, pela permutação, sabemos que há <span class="math inline">\(n!\)</span> formas de trocar de lugar as letras repetidas sem mudar o arranjo. E caso tenhamos mais de uma letra repetida, sabemos pelo PM (pois é um processo sequencial) que o número total de formas de trocar de lugar as letras repetidas sem mudar o arranjo é dado por <span class="math inline">\(n_1! \times n_2! \times ... \times n_k!\)</span>. Assim, para corrigir a contagem, basta dividir a permutação total por esse número.</p>
+</section>
+<section id="combinação" class="level3">
+<h3 class="anchored" data-anchor-id="combinação">Combinação</h3>
+<p>Até agora estavamos nos importanto com a ordem das coisas, mas e se ela não importar?</p>
+<p>Ex.3: Quantas formas diferentes podemos escolher 3 pessoas, dentre 10 pessoas para formar um time?</p>
+<p>Acredito que seja claro porque a ordem é irrelevante, pois o time formado por João, Maria e José é o mesmo time formado por José, João e Maria.</p>
+<p>Pelo PM, temos:</p>
+<p><span class="math display">\[
+10 \times 9 \times 8 = 720 \quad \text{(PM)}
+\]</span></p>
+<p>times totais importando a ordem, agora basta usar a mesma logica que usamos para permutações repetidas, vamos dividir pela quantidade de vezes que estamos contando esse arranjo a mais, que no caso é o número de formas de eu puxar essas mesmas 3 pessoas em diferentes ordens, ou seja, <span class="math inline">\(3!\)</span> pela permutação. então o resultado final é:</p>
+<p><span class="math display">\[
+\frac{10 \times 9 \times 8}{3!} = 120
+\]</span></p>
+<p>De forma mais geral chamamos isso de combinação: Se temos n objetos distintos, e queremos escolher r deles, sem importar a ordem, então o número de formas diferentes de escolher é dado por:</p>
+<p><span class="math display">\[
+\binom{n}{r} = \frac{n!}{r! \times
+(n-r)!} \quad
+\]</span></p>
+<p>Agora já temos um básico da ideia de como contar coisas, então podemos partir para o que realmente interessa, a probabilidade.</p>
+</section>
+</section>
+<section id="axiomas-da-probabilidade" class="level2">
+<h2 class="anchored" data-anchor-id="axiomas-da-probabilidade">Axiomas da Probabilidade</h2>
+<p>Antes de irmos para os axiomas, apenas notem que não irei dispor uma definição rigorosa sobre o que é uma probabilidade, apesar de tratarmos dela com rigor. Não fiz isso, pois depende de Teoria da Medida para uma definição formal, matéria essa que ainda não sou versado, e para além disso, esse post tem como objetivo ser uma primeiro vislumbre sobre probabilidade formal nível de graduação, enquanto Teoria da Medida geralmente só é estudada em Pós-Graduação. Porém, caso queira dar uma olhada em uma definição rigorosa de probabilidade, recomendo o video <a href="https://www.youtube.com/watch?v=mS0hak04rZs&amp;list=PLjCdqxwexy0kE8UNSqoyOqyKGvx9fFWHH">Aula 01 Probabilidades</a> do exclente professor da USP, Cláudio Possani. Para seguirmos, simplesmente consideraremos probabilidade como uma função sobre um evento (Um conjunto) que representa a chance desse evento acontecer.</p>
+<p>Um axioma nada mais é do que o conjunto de regras básicas que irá regir como usamos probabilidades, dessa forma, eles não envolvem demonstrar algo, nós simplesmente acreditamos/aceitamos que eles sejam verdade. Esses são conhecidos como os axiomas de Kolmogorov:</p>
+<ol type="1">
+<li><p><span class="math inline">\(0 \le P(E) \le 1\)</span>, onde E é um evento (usaremos E como evento geralmente)</p></li>
+<li><p><span class="math inline">\(P(S) = 1\)</span>, S é o espaço amostral inteiro, isso é, o cojunto de todos os eventos possiveis.</p></li>
+<li><p><span class="math inline">\(P\left(\bigcup_{i=1}^{\infty} E_i\right)=\sum_{i=1}^{\infty} P(E_i)\)</span></p></li>
+</ol>
+<p>Todos os 3 axiomas são bastante razoaveis, o primeiro diz que uma probabilidade é um valor entre 0 e 1, caso não esteja acostumado a ver probabilidade como por exemplo 0.55, e sim como 55%, saiba que é a mesma coisa, pois % é utilizado como sinonimo de divisão por 100.</p>
+<p>O segundo axioma nos diz, que a probabilidade de algo no espaço amostral ocorrer é igual a 1. Como exemplo, pense em jogar um dado de 6 lados, digamos que definimos os eventos como o numero que cair no dado, então teremos <span class="math inline">\(E_1, E_2, E_3, E_4,E_5,E_6\)</span>. Onde cada um desses é representado abaixo <span class="math display">\[
+\begin{aligned}
+E_1 &amp;= \{1\} \\
+E_2 &amp;= \{2\} \\
+E_3 &amp;= \{3\} \\
+E_4 &amp;= \{4\} \\
+E_5 &amp;= \{5\} \\
+E_6 &amp;= \{6\}
+\end{aligned}
+\]</span></p>
+<p>Assim, dizemos que o evento <span class="math inline">\(E_1\)</span> aconteceu quando o dado caiu 1, mas e o evento S? Simples, ele é representado como <span class="math inline">\(S = \{1,2,3,4,5,6\}\)</span>, ou seja, para qualquer valor que o dado cair, cai em algum valor de S, portanto S ocorre. Logicamente, o axioma diz para nos que a probabilidade de <em>algo</em> acontecer é igual a 1.</p>
+<p>O terceiro parece muito mais assustador, mas ele não é complicado, ele apenas diz que se os eventos são mutuamente exclusivos, isso é <span class="math inline">\(A \cap B = \varnothing\)</span>, a probabilidade da união deles é igual a soma das probabilidades. Vamos novamente para o lançamento de um dado, ele necessariamente vai cair no valor de 1 a 6, a probabilidade de cair em cada valor é de 1/6, eles são mutamente exclusivos pois se cair x no dado não pode ter caido nenhum outro valor. Então, via o axioma 3, temos que a probabilidade de cair 1 ou 2, é equivalente a 2/6, veja a conta abaixo: <span class="math display">\[
+\begin{aligned}
+P(E_1 \cup E_2) &amp;= P(E_1) + P(E_2) \\
+P(E_1 \cup E_2) &amp;= \frac{1}{6} + \frac{1}{6} \\
+P(E_1 \cup E_2) &amp;= \frac{2}{6} = \frac{1}{3}
+\end{aligned}
+\]</span></p>
+<p>Com isso temos a base das regras de como a probabilidade funciona. Entretanto, essas regras por si só não são muito poderosas, por isso, vamos provar dois teoremas simples e intuitivos antes de irmos resolver alguns exemplos.</p>
+<section id="teorema-1" class="level3">
+<h3 class="anchored" data-anchor-id="teorema-1">Teorema 1</h3>
+<p>Definição: <span class="math display">\[
+P(E^c) = 1 - P(E)
+\]</span></p>
+<p>Prova:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;E^c \cup E = S \\
+&amp;P(E^c) + P(E) = P(S) \quad \text{(via Axioma 3)} \\
+&amp;P(E^c) + P(E) = 1 \quad \text{(via Axioma 2)} \\
+&amp;P(E^c) = 1 - P(E)
+\end{aligned}
+\]</span></p>
+<p>Esse teorema basicamente permite que calculemos a probabilidade do complementar de um evento, então se sabemos por exemplo que a probabilidade de dar cara em determinada moeda é de 0.6, sabemos agora que a de não dar cara é de 0.4. Note que não posso afirmar que a probabilidade de dar coroa é de 0.4 sem fazer a suposição de que é impossivel que a moeda caia de pé (por mais que seja razoavel desprezar essa probabilidade na maior parte dos casos).</p>
+</section>
+<section id="teorema-2" class="level3">
+<h3 class="anchored" data-anchor-id="teorema-2">Teorema 2</h3>
+<p>Definição: <span class="math display">\[
+P(A \cup B) = P(A) + P(B) - P(A \cap B)
+\]</span></p>
+<p>Prova:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;B = (A \cap B)\cup (A^c \cap B) \\
+&amp;P(B) = P(A \cap B) + P(A^c \cap B) \quad \text{Via axioma 3}\\
+&amp;P(A^c \cap B) = P(B) - P(A \cap B)\\
+\end{aligned}
+\]</span></p>
+<p>Do resultado acima obtemos: <span class="math inline">\(P(A^c \cap B) = P(B) - P(A \cap B)\)</span> Com ele agora podemos finalizar a prova</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;A \cup B = A \cup (A^c \cap B) \\
+&amp;P(A \cup B) = P(A) + P(A^c \cap B) \quad \text{Via axioma 3} \\
+&amp;P(A \cup B) = P(A) + P(B) - P(A \cap B) \quad \text{Usando o resultado acima}\\
+\end{aligned}
+\]</span></p>
+<p>Agora que está provado, temos mais uma regra bem poderosa, que nos permite calcular probabilidade de união de eventos que não são mutuamente exclusivos. A intuição do porque essa formula funciona é bastante simples, veja o diagrama abaixo</p>
+<div id="fig-vein" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-vein-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrama_venn.png" class="img-fluid figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-vein-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Diagrama de Venn
+</figcaption>
+</figure>
+</div>
+<p>Se quisermos cacular a área de <span class="math inline">\(A \cup B\)</span> teriamos que somar a área de A, a área de B e subtrair a intersecção deles ( <span class="math inline">\(A \cap B\)</span> ), pois teriamos somado aquela área duas vezes, estamos apenas retirando o que contamos a mais. Esse é exatamente a mesma lógica da nossa formula, cálculamos a probabilidade de A ocorrer mais a de B, mas nisso estariamos “contando” duas vezes os casos onde A e B ocorrem juntos, por isso subtraímos <span class="math inline">\(P(A \cap B)\)</span></p>
+</section>
+<section id="alguns-problemas" class="level3">
+<h3 class="anchored" data-anchor-id="alguns-problemas">Alguns problemas</h3>
+<p>Temos em uma linha, 4 bolas vermelhas, 8 azuis e 5 verdes alinhadas aleatóriamente</p>
+<ol type="A">
+<li>Qual a probabilidade de que as primeiras 5 bolas sejam azuis?</li>
+</ol>
+<p>A = Evento em que as 5 primeiras sejam azuis</p>
+<p>A estratégia mais simples para esse problema, envolve pensar em um problema equivalente. Vamos supor que eu vá retirar 5 bolas de uma urna que contem as mesmas bolas da linha, qual a probabilidade de tirar as 5 primeiras como azuis? Note que é exatamente o mesmo problema, pois podemos pensar que toda vez que eu tiro da urna, eu posso colocar na linha, portanto a quantidade de combinações na linha é igual as de retirada da urna.</p>
+<p>Dessa forma, podemos usar combinatória para calcular quantidade de termos tanto do denominador, quanto do numerador:</p>
+<p><span class="math display">\[
+P(A) = \frac{\binom{8}{5}}{\binom{17}{5}} = \frac{2}{221}
+\]</span></p>
+<p>Uma duvida completamente justa que você pode estar tendo é, porque usamos combinação se o problema claramente depende de ordem, sendo que combinação (como demonstrado anteriormente) é para casos onde a ordem dos termos é irrelevante?</p>
+<p>Embora a ordem das bolas na linha importe, podemos usar combinações porque contar diretamente todas as configurações da linha exigiria lidar com repetições (bolas da mesma cor são indistinguíveis).</p>
+<p>Por exemplo, o número total de linhas possíveis seria:</p>
+<p><span class="math display">\[
+\frac{17!}{4!8!5!}
+\]</span></p>
+<p>e o número de casos favoráveis, onde as 5 primeiras bolas são azuis, seria:</p>
+<p><span class="math display">\[
+\frac{12!}{4!3!5!}
+\]</span></p>
+<p>Logo,</p>
+<p><span class="math display">\[
+P(A)=
+\frac{\frac{12!}{4!3!5!}}
+{\frac{17!}{4!8!5!}}
+\]</span></p>
+<p>que, após simplificar, é equivalente a:</p>
+<p><span class="math display">\[
+P(A)=\frac{\binom{8}{5}}{\binom{17}{5}}.
+\]</span></p>
+<p>Portanto, usar combinações é apenas uma forma mais simples de fazer essa contagem, pois os fatores relacionados à ordem e às repetições já são considerados automaticamente.</p>
+<ol start="2" type="A">
+<li>Qual a probabilidade de que nenhuma das 5 primeiras seja azul?</li>
+</ol>
+<p>A = Evento em que nenhuma das 5 primeiras sejam azuis</p>
+<p>De forma equivalente a última, ao inves de calcular considerando o conjunto das azuis, consideramos todas menos as azuis</p>
+<p><span class="math display">\[
+P(A) = \frac{\binom{9}{5}}{\binom{17}{5}} = \frac{9}{442}
+\]</span></p>
+<ol start="3" type="A">
+<li>Qual a probabilidade de que as três últimas bolas tenham cores diferentes?</li>
+</ol>
+<p>A = Evento em que as três últimas bolas tenham cores diferentes</p>
+<p>Nesse caso, é mais simples utilizar diretamente os princípios de contagem.</p>
+<p><span class="math display">\[
+P(A) = \frac{8 \cdot 5 \cdot 4}{17 \cdot 16 \cdot 15} \cdot 3! = \frac{4}{17}  \quad \text{via PM}
+\]</span></p>
+<p>Note que multiplicamos por <span class="math inline">\(3!\)</span> porque, ao calcular</p>
+<p><span class="math display">\[
+\frac{8}{17}\cdot\frac{5}{16}\cdot\frac{4}{15},
+\]</span></p>
+<p>estamos considerando apenas uma ordem específica das cores nas três últimas posições, por exemplo: azul, verde e vermelha.</p>
+<p>Entretanto, o evento de interesse não exige uma ordem específica, apenas que as três últimas bolas tenham cores diferentes. Como as três cores podem aparecer em qualquer uma das</p>
+<p><span class="math display">\[
+3! = 6
+\]</span></p>
+<p>ordens possíveis, e essas ordens são mutuamente exclusivas, basta multiplicar a probabilidade de uma ordem específica por <span class="math inline">\(3!\)</span>.</p>
+<p>Se não fizéssemos essa multiplicação, estaríamos calculando apenas a probabilidade de uma única sequência de cores, e não a probabilidade de que as três últimas bolas tenham cores diferentes em qualquer ordem.</p>
+<p>Além disso, gaste um tempo para se convencer de porque esse problema é identico a calcular a probabilidade considerando as 3 primeiras, e não as 3 últimas</p>
+<ol start="4" type="A">
+<li>Qual é a probabilidadde de que todas as bolas vermelhas estejam juntas?</li>
+</ol>
+<p>A = Evento em que todas as bolas vermelhas estejam juntas</p>
+<p>Para esse problema, podemos usar um raciocínio diferente, podemos pensar que as bolas vermelhas, são uma unica entidade, vamos pensar nas 4 vermelhas como uma unica bola vermelha, afinal só estamos interessados em cálcular a chance de estarem juntas</p>
+<p><span class="math display">\[
+P(A) = \frac{14!}{17!} \cdot 4! = \frac{7}{120}  \quad \text{via PM}
+\]</span></p>
+<p>Da mesma forma que no exemplo C, temos que multiplicar o numerador pela quantidade de permutações possiveis entre os próprios vermelhos.</p>
+<p>Note que nesses exemplos, sempre me dei ao trabalho de definir claramente qual era o evento em que eu estava cálculando, sempre define o A. Para esses exemplos, isso pode parecer preciosimo matemático, e realmente é. Entretanto, para problemas mais complexos, é muito fácil se perder nos cálculos se não definir direito seus eventos. Por tanto, mesmo que seja chato, SEMPRE defina claramente seus eventos. A importancia disso ficará mais clara quando chegarmos em probabilidade condicional, mas já é bom tornar isso um hábito.</p>
+<p>W.I.P.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = true;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/deeplynoted\.net");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

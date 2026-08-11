@@ -7,8 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Luca WB">
+<meta name="dcterms.date" content="2026-03-11">
 
-<title>My Study Notes – My Studies</title>
+<title>Guia de Ciência de Dados – My Studies</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -24,26 +25,24 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -71,65 +70,7 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-subtitle','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-subtitle","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
@@ -140,7 +81,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">My Studies</span>
     </a>
   </div>
@@ -151,7 +92,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">Luca Wolffenbuttel Bohnenberger</span></a>
   </li>  
   <li class="nav-item compact">
@@ -170,13 +111,16 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">My Study Notes</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">Guia de Ciência de Dados</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">pt</div>
+              </div>
+                  </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-left">
+  <div class="quarto-title-meta">
 
       <div>
       <div class="quarto-title-meta-heading">Author</div>
@@ -185,209 +129,81 @@ window.Quarto = {
             </div>
     </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">March 11, 2026</p>
+      </div>
+    </div>
     
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">May 28, 2026</p>
+      </div>
+    </div>
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(4)</span></div><div class="category" data-category="WIP">WIP <span class="quarto-category-count">(1)</span></div><div class="category" data-category="code">code <span class="quarto-category-count">(2)</span></div><div class="category" data-category="en">en <span class="quarto-category-count">(2)</span></div><div class="category" data-category="math">math <span class="quarto-category-count">(3)</span></div><div class="category" data-category="nn">nn <span class="quarto-category-count">(2)</span></div><div class="category" data-category="optimization">optimization <span class="quarto-category-count">(1)</span></div><div class="category" data-category="probability">probability <span class="quarto-category-count">(2)</span></div><div class="category" data-category="pt">pt <span class="quarto-category-count">(2)</span></div><div class="category" data-category="scratch">scratch <span class="quarto-category-count">(3)</span></div></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="index.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
+    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="index.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
+<section id="sumário" class="level2">
+<h2 class="anchored" data-anchor-id="sumário">Sumário</h2>
+<p>O objetivo desse post, é servir como um guia geral de Ciência de Dados, a ideia é organizar o minimo de conhecimento sobre a área que todos deveriam ter. Esse post não tem como objetivo ensinar técnicas de aprendizado de máquina, nem nenhuma habilidade verdadeiramente trabalhosa de se adquirir ou compreender. Aqui, irei abordar o processo de ciência de dados, e porque ele é desse jeito, por exemplo, qual a real necessidade de um conjunto de validação? e porque não apenas treino e teste? Para além de processos, abordaremos bastante principais nomenclaturas da área que é interessante todos saberem, para pelo menos termos um vocabulario em comum.</p>
+<p>Em suma, ao final desse post, você deve ter uma visão geral da área e não possivelmente não ficará perdido por causa de nomenclaturas desconhecidas.</p>
+</section>
+<section id="introdução" class="level2">
+<h2 class="anchored" data-anchor-id="introdução">Introdução</h2>
+<section id="o-que-é-ciência-de-dados" class="level3">
+<h3 class="anchored" data-anchor-id="o-que-é-ciência-de-dados">O que é Ciência de Dados?</h3>
+<p>Embora existam variações, a Ciência de Dados pode ser definida formalmente como um campo interdisciplinar que utiliza métodos científicos, processos, algoritmos e sistemas para extrair conhecimento e insights de dados estruturados e não estruturados.</p>
+<p>“Ciência de Dados, é a ciência que estuda formas de obter insights não triviais com base em dados”</p>
+<p>Bom, por ciência, quero dizer que utilizamos de metódo cientifico, que consiste em uma sequência de passos sistemáticos utilizado para adiquirir/validar conhecimento com base em experiências observáveis e experimentações</p>
+<p>Agora, o que quero dizer com insght? Basicamente uma compreensão clara e acionável sobre algo.</p>
+<p>Em outras palavras, ciência de dados é o processo de obter um conhecimento não trivial (não óbvio) a partir de dados</p>
+</section>
+</section>
+<section id="o-processo-de-ciência-de-dados" class="level2">
+<h2 class="anchored" data-anchor-id="o-processo-de-ciência-de-dados">O processo de ciência de dados</h2>
+<p>Bom, agora para fazermos Ciência de Dados, precisamos começar por algo, mas o que é esse algo? Muitos gostam de dizer que são dados, mas eu discordo dessa perspectiva, o algo é uma pegunta, um problema. Antes de tudo, você precisa saber o que quer fazer, e isso pode ser algo bem generico, como “quero saber quais clientes tem mais chance de gastar mais”, “quero saber qual o preço de uma casa” e “quero saber qual pessoa vai ficar doente”, mas também pode ser algo muito especifico “…ou até algo cirurgicamente específico, como”quero prever a probabilidade de o meu vizinho começar uma obra com furadeira às 7h de um domingo”.</p>
+<p>Uma vez que temos um problema a ser resolvido, vamos atrás de dados, podemos procurar em fontes publicas de diversas formas, seja via api rest (uma forma padronizada para que diferentes softwares conversem um com o outro), web scraping (pegar dados de sites através de um processo automatizado), ou em casos mais extremos onde os dados não existem, precisamos coletá-los manualmente ou pagar para que alguem o faça para nós, isso é bastante comum com pesquisa eleitoral, onde é precisam pedir manualmente para as pessoas. Se não conseguir os dados de jeito nenhum, apenas desista ou mude o problema que quer resolver, ou então a forma de pensar sobre ele.</p>
+<p>Digamos que você seja um Cientista de Dados de uma empresa interessada em medir a tal “felicidade” dos funcionários. Logo de cara, você esbarra no problema: perguntar diretamente “você está feliz?” gera dados viciados; o medo de parecer desmotivado trava a sinceridade. Mas aqui está o segredo: o que a empresa busca, no fundo, não é um estado emocional abstrato, mas sim a satisfação prática com o trabalho e o engajamento real.</p>
+<p>É aqui que entra o “pulo do gato”. Em vez de tentar capturar o sentimento subjetivo, você muda a pergunta para algo que deixe rastros concretos. Você passa a analisar, por exemplo, a velocidade de resposta nas ferramentas de chat ou o volume de interações em canais de integração. Você parou de perseguir a “felicidade” literal e começou a medir o fluxo de colaboração e a saúde da rotina. Ao ajustar o problema para algo mensurável, você entrega o que a empresa realmente precisava saber o tempo todo, provando que, na Ciência de Dados, muitas vezes o objetivo real não está na pergunta que te fizeram, mas na que você foi capaz de responder com dados.</p>
+<p>Ou seja, mudando nosso objetivo de coletar dados sobre a felicidade, para dados que estejam possivelmente correlacionados com felicidade, nos passamos de não ter os dados, para termos os dados.</p>
+<p>Mas antes de qualquer algoritmo, entra a Análise Exploratória: o momento de torturar os dados até que eles confessem a verdade. É aqui que você descobre, por exemplo, que o seu funcionário ‘mais engajado’ é, na verdade, um bot de testes que envia 500 mensagens por segundo no Slack. Sem esse choque de realidade, você corre o risco de concluir que o segredo da produtividade corporativa é, literalmente, deixar de ser humano. Essa parte é util para descobrir correlações e fatos sobre seus dados que talvez você não saiba, isso é particularmente importante caso esteja trabalhando com dados que não entenda, como por exemplo dados fisiologicos sobre o corpo humano para a previsão de uma doença.</p>
+<p>Agora que temos os dados, precisamos de algum algoritmos de aprendizado de máquina para extrair conhecimento do modelo, nesse proceso, ao escolhermos um modelo, possivelmente o modelo terá restrições sobre os dados que os nossos dados não respeitam, como por exemplo, a grande maioria dos modelos só aceita numeros como entrada, então utilizamos de técnicas de preprocessamento e limpeza de dados para deixá-los prontos para nosso modelo. Uma vez que o modelo é treinado, obtemos conhecimento com ele, e com isso podemos gerar insights.</p>
+<p>O processo pode acabar aqui a depender da situação, mas ele também pode envolver mais etapas, como por exemplo, poderiamos ter que voltar ao incio porque percebemos que nossa pergunta inicial não fazia sentido, ou então o nosso modelo seja algo de uso continuo, como por exemplo um sistema de recomendação de filmes na Netflix, nós precisariamos implementá-lo no sistema geral da netflix e ficar monitorando para que ele não quebre (sim, modelos podem quebrar)</p>
+<p>Todo esse processo é comumente descrito em um diagrama chamado CRISP-DM (Cross-Industry Standard Process for Data Mining)</p>
+<div id="fig-neuron" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-neuron-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="crisp_dm.jpg" class="img-fluid figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-neuron-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: CRISP-DM diagram
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="dados-informação-e-conhecimento" class="level2">
+<h2 class="anchored" data-anchor-id="dados-informação-e-conhecimento">Dados, informação e conhecimento</h2>
 
 
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="pt,math,probability,optimization" data-listing-date-sort="1786244400000" data-listing-file-modified-sort="1786475968671" data-listing-date-modified-sort="1786475968000" data-listing-reading-time-sort="10" data-listing-word-count-sort="1899">
-<div class="thumbnail">
-<p><a href="./posts/erro-linear/index.html" class="no-external"></a></p><a href="./posts/erro-linear/index.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-</a><p><a href="./posts/erro-linear/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/erro-linear/index.html" class="no-external">Regressão Linear: Probabilidade vs.&nbsp;Otimização</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/erro-linear/index.html" class="no-external">Uma dedução dos pressupostos sobre os erros</a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('pt'); return false;">
-pt
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('math'); return false;">
-math
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('probability'); return false;">
-probability
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('optimization'); return false;">
-optimization
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/erro-linear/index.html" class="no-external">Esse post surgiu por conta da minha primeira aula da cadeira de Aprendizado Profundo na universidade, nessa aula, o professor fez a demonstração da formula normal da…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/erro-linear/index.html" class="no-external">
-<div class="listing-date">
-Aug 9, 2026
-</div>
-<div class="listing-author">
-Luca WB
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="scratch,pt,math,probability,WIP" data-listing-date-sort="1779937200000" data-listing-file-modified-sort="1786466646463" data-listing-date-modified-sort="1786466646000" data-listing-reading-time-sort="14" data-listing-word-count-sort="2766">
-<div class="thumbnail">
-<p><a href="./posts/notas-probabilidade/index.html" class="no-external"></a></p><a href="./posts/notas-probabilidade/index.html" class="no-external">
-<p class="card-img-top"><img src="posts/notas-probabilidade/diagrama_venn.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./posts/notas-probabilidade/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/notas-probabilidade/index.html" class="no-external">De onde vem as fórmulas de probabilidade?</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/notas-probabilidade/index.html" class="no-external">Uma construção axiomática da probabilidade com exemplos</a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('scratch'); return false;">
-scratch
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('pt'); return false;">
-pt
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('math'); return false;">
-math
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('probability'); return false;">
-probability
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('WIP'); return false;">
-WIP
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/notas-probabilidade/index.html" class="no-external">Durante minha gradução, a cadeira de probabilidade foi dada de forma muito mecânica, onde apenas apareciam fórmulas mágicas que supostamente calculavam a probabilidade, mas…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/notas-probabilidade/index.html" class="no-external">
-<div class="listing-date">
-May 28, 2026
-</div>
-<div class="listing-author">
-Luca WB
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="scratch,en,code,nn" data-listing-date-sort="1769569200000" data-listing-file-modified-sort="1786466615231" data-listing-date-modified-sort="1786466615000" data-listing-reading-time-sort="15" data-listing-word-count-sort="2911">
-<div class="thumbnail">
-<p><a href="./posts/makemore-1/index.html" class="no-external"></a></p><a href="./posts/makemore-1/index.html" class="no-external">
-<p class="card-img-top"><img src="posts/makemore-1/index_files/figure-html/cell-7-output-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./posts/makemore-1/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/makemore-1/index.html" class="no-external">Building an Autoregressive Neural Network</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/makemore-1/index.html" class="no-external">Part 1</a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('scratch'); return false;">
-scratch
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('en'); return false;">
-en
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('code'); return false;">
-code
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('nn'); return false;">
-nn
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/makemore-1/index.html" class="no-external">In this post, we will implement an Autoregressive Neural Network from scratch, relying solely on the PyTorch tensor class. We assume prior familiarity with Neural Networks;…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/makemore-1/index.html" class="no-external">
-<div class="listing-date">
-Jan 28, 2026
-</div>
-<div class="listing-author">
-Luca WB
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="scratch,en,code,math,nn" data-listing-date-sort="1767841200000" data-listing-file-modified-sort="1786465941818" data-listing-date-modified-sort="1786465941000" data-listing-reading-time-sort="34" data-listing-word-count-sort="6779">
-<div class="thumbnail">
-<p><a href="./posts/nn-from-scratch-1/index.html" class="no-external"></a></p><a href="./posts/nn-from-scratch-1/index.html" class="no-external">
-<p class="card-img-top"><img src="posts/nn-from-scratch-1/index_files/figure-html/cell-2-output-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./posts/nn-from-scratch-1/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/nn-from-scratch-1/index.html" class="no-external">Building Neural Networks from Scratch</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/nn-from-scratch-1/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('scratch'); return false;">
-scratch
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('en'); return false;">
-en
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('code'); return false;">
-code
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('math'); return false;">
-math
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('nn'); return false;">
-nn
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/nn-from-scratch-1/index.html" class="no-external">The goal of this page is to understand how to implement a neural network from scratch without any external libraries. I’ll consider that you already have some basic…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/nn-from-scratch-1/index.html" class="no-external">
-<div class="listing-date">
-Jan 8, 2026
-</div>
-<div class="listing-author">
-Luca WB
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

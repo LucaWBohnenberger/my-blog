@@ -2,9 +2,10 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/erro-linear/index.html",
+      "/posts/notas-probabilidade/index.html",
       "/posts/makemore-1/index.html",
-      "/posts/nn-from-scratch-1/index.html",
-      "/posts/machine-unlearning/index.html"
+      "/posts/nn-from-scratch-1/index.html"
     ]
   }
 ]

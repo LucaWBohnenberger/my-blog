@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Luca WB">
+<meta name="dcterms.date" content="2026-08-09">
+
+<title>Regressão Linear: Probabilidade vs.&nbsp;Otimização – My Studies</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">My Studies</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Luca Wolffenbuttel Bohnenberger</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/LucaWBohnenberger/my-blog"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Regressão Linear: Probabilidade vs.&nbsp;Otimização</h1>
+            <p class="subtitle lead">Uma dedução dos pressupostos sobre os erros</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">pt</div>
+                <div class="quarto-category">math</div>
+                <div class="quarto-category">probability</div>
+                <div class="quarto-category">optimization</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Luca WB </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">August 9, 2026</p>
+      </div>
+    </div>
+    
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">August 11, 2026</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#breve-introdução" id="toc-breve-introdução" class="nav-link active" data-scroll-target="#breve-introdução">Breve introdução</a></li>
+  <li><a href="#dedução-via-otimização" id="toc-dedução-via-otimização" class="nav-link" data-scroll-target="#dedução-via-otimização">Dedução via Otimização</a>
+  <ul class="collapse">
+  <li><a href="#o-truque-de-notação-notation-trick" id="toc-o-truque-de-notação-notation-trick" class="nav-link" data-scroll-target="#o-truque-de-notação-notation-trick">O Truque de Notação (Notation Trick)</a></li>
+  <li><a href="#expandindo-a-equação-algébrica" id="toc-expandindo-a-equação-algébrica" class="nav-link" data-scroll-target="#expandindo-a-equação-algébrica">Expandindo a Equação Algébrica</a></li>
+  <li><a href="#a-derivada-matricial-calculando-o-gradiente" id="toc-a-derivada-matricial-calculando-o-gradiente" class="nav-link" data-scroll-target="#a-derivada-matricial-calculando-o-gradiente">A Derivada Matricial (Calculando o Gradiente)</a></li>
+  <li><a href="#minimização-e-a-equação-normal" id="toc-minimização-e-a-equação-normal" class="nav-link" data-scroll-target="#minimização-e-a-equação-normal">Minimização e a Equação Normal</a></li>
+  </ul></li>
+  <li><a href="#dedução-via-probabilidadeesperança" id="toc-dedução-via-probabilidadeesperança" class="nav-link" data-scroll-target="#dedução-via-probabilidadeesperança">Dedução via Probabilidade/Esperança</a>
+  <ul class="collapse">
+  <li><a href="#o-pressuposto-fundamental" id="toc-o-pressuposto-fundamental" class="nav-link" data-scroll-target="#o-pressuposto-fundamental">O pressuposto fundamental</a></li>
+  <li><a href="#por-que-assumir-eu-mid-x0" id="toc-por-que-assumir-eu-mid-x0" class="nav-link" data-scroll-target="#por-que-assumir-eu-mid-x0">Por que assumir <span class="math inline">\(E[u \mid X]=0\)</span>?</a></li>
+  <li><a href="#ortogonalidade-entre-erro-e-variáveis-explicativas" id="toc-ortogonalidade-entre-erro-e-variáveis-explicativas" class="nav-link" data-scroll-target="#ortogonalidade-entre-erro-e-variáveis-explicativas">Ortogonalidade entre erro e variáveis explicativas</a></li>
+  <li><a href="#da-população-para-a-amostra" id="toc-da-população-para-a-amostra" class="nav-link" data-scroll-target="#da-população-para-a-amostra">Da população para a amostra</a></li>
+  </ul></li>
+  <li><a href="#comparando-as-duas-deduções" id="toc-comparando-as-duas-deduções" class="nav-link" data-scroll-target="#comparando-as-duas-deduções">Comparando as duas deduções</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="index.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="breve-introdução" class="level2">
+<h2 class="anchored" data-anchor-id="breve-introdução">Breve introdução</h2>
+<p>Esse post surgiu por conta da minha primeira aula da cadeira de Aprendizado Profundo na universidade, nessa aula, o professor fez a demonstração da formula normal da regressão linear. Não era exatamente uma novidade essa formula, eu já sabia demonstrar essa formula de cabeça usando valor esperado condicional, o que me intrigou foi um detalhe da demonstração. Meu professor usou a abordagem de otimização para dedução, calculando o ponto minimo global da função perda/avaliação. Isso me intrigou pelo fato de que, a primeira vista, não tinhamos levantado nenhum pressuposto sobre a natureza do erro do nosso modelo, coisa que temos que fazer para realiar a dedução via valor esperado.</p>
+<p>Assim, gastei meu fim de semana seguinte pensando sobre o assunto, pesquisei um pouco na internet sobre a correlção entre as duas abordagens e os pressupostos dela, e não achei nada muito satisfatório, então comecei a rabiscar no papel para ver se esclarecia alguma coisa, e acredito ter achado uma perspectiva interessante para ver a relação entre as duas abordagens no que tange os pressupostos sobre o erro</p>
+</section>
+<section id="dedução-via-otimização" class="level2">
+<h2 class="anchored" data-anchor-id="dedução-via-otimização">Dedução via Otimização</h2>
+<p>Primeiro, antes de mais nada, é preciso estar familiarizado sobre as deduções, pare que então possamos falar sobre elas.</p>
+<p>A ideia central na regressão linear é encontrar os parâmetros (ou pesos) que minimizam o erro das nossas previsões. Assim como no exemplo do gradiente onde olhamos para a derivada para encontrar a direção que reduz o valor da função, aqui o nosso objetivo principal é minimizar a função de custo conhecida como Soma dos Erros Quadráticos (SSE - <em>Sum of Squared Errors</em>).</p>
+<p>A fórmula clássica do SSE é a soma das diferenças ao quadrado entre o valor real (<span class="math inline">\(y_i\)</span>) e o valor previsto (<span class="math inline">\(\hat{y}_i\)</span>):</p>
+<p><span class="math display">\[ SSE = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 \]</span></p>
+<section id="o-truque-de-notação-notation-trick" class="level3">
+<h3 class="anchored" data-anchor-id="o-truque-de-notação-notation-trick">O Truque de Notação (Notation Trick)</h3>
+<p>Antes de derivarmos, precisamos simplificar nossa notação. Um modelo linear comum tem um viés (intercepto ou <em>bias</em>) <span class="math inline">\(b\)</span> e os pesos das características <span class="math inline">\(w_1, \dots, w_m\)</span>. A previsão para uma única amostra é escrita como:</p>
+<p><span class="math display">\[ \hat{y}_i = b + w_1 x_{i1} + \dots + w_m x_{im} \]</span></p>
+<p>Para evitar o trabalho de calcular as derivadas do viés <span class="math inline">\(b\)</span> separadamente dos outros pesos, nós usamos um <strong>truque de notação</strong> (<em>notation trick</em>). Nós incorporamos o <span class="math inline">\(b\)</span> no vetor de pesos <span class="math inline">\(w\)</span> (sendo o primeiro elemento, <span class="math inline">\(w_0\)</span>) e adicionamos uma coluna inteira de <span class="math inline">\(1\)</span>s na nossa matriz de características <span class="math inline">\(X\)</span>.</p>
+<p>Dessa forma, a previsão de todas as amostras ao mesmo tempo se transforma em uma elegante multiplicação de matrizes:</p>
+<p><span class="math display">\[ \hat{y} = Xw \]</span></p>
+<p>Com esse truque, a nossa função de erro <span class="math inline">\(SSE\)</span> pode ser reescrita na sua forma vetorializada:</p>
+<p><span class="math display">\[ SSE(w) = (y - Xw)^T (y - Xw) \]</span></p>
+</section>
+<section id="expandindo-a-equação-algébrica" class="level3">
+<h3 class="anchored" data-anchor-id="expandindo-a-equação-algébrica">Expandindo a Equação Algébrica</h3>
+<p>Para conseguir derivar a função e encontrar o ponto de mínimo, vamos primeiro expandir a multiplicação dessas matrizes:</p>
+<p><span class="math display">\[ SSE(w) = (y^T - (Xw)^T)(y - Xw) \]</span> <span class="math display">\[ SSE(w) = y^Ty - y^TXw - (Xw)^Ty + (Xw)^T(Xw) \]</span></p>
+<p>Aplicando a propriedade da matriz transposta, onde <span class="math inline">\((AB)^T = B^TA^T\)</span>:</p>
+<p><span class="math display">\[ SSE(w) = y^Ty - y^TXw - w^TX^Ty + w^TX^TXw \]</span></p>
+<p>Aqui entra um detalhe geométrico e algébrico importante, se você observar as dimensões, o termo <span class="math inline">\(y^TXw\)</span> resulta em um único número, ou seja, é um <strong>escalar</strong>. Como a transposta de um escalar é ele mesmo, podemos dizer que <span class="math inline">\((y^TXw)^T = w^TX^Ty\)</span>. Portanto, os dois termos do meio são idênticos e podemos agrupá-los:</p>
+<p><span class="math display">\[ SSE(w) = y^Ty - 2w^TX^Ty + w^TX^TXw \]</span></p>
+</section>
+<section id="a-derivada-matricial-calculando-o-gradiente" class="level3">
+<h3 class="anchored" data-anchor-id="a-derivada-matricial-calculando-o-gradiente">A Derivada Matricial (Calculando o Gradiente)</h3>
+<p>A ideia básica é que, se queremos minimizar o valor da função, precisamos olhar para a derivada dela. Como <span class="math inline">\(SSE\)</span> é uma função convexa, o seu ponto de mínimo global ocorre exatamente onde a inclinação (o gradiente) é zero. Vamos derivar a função em relação ao vetor de pesos <span class="math inline">\(w\)</span>:</p>
+<p><span class="math display">\[ \frac{\partial}{\partial w} SSE(w) = \frac{\partial}{\partial w} (y^Ty - 2w^TX^Ty + w^TX^TXw) \]</span></p>
+<p>Analisando termo a termo:</p>
+<ol type="1">
+<li><p>A derivada de <span class="math inline">\(y^Ty\)</span> em relação a <span class="math inline">\(w\)</span> é <strong><span class="math inline">\(0\)</span></strong> (pois é apenas uma constante, não depende de <span class="math inline">\(w\)</span>).</p></li>
+<li><p>Usando a regra de derivada matricial <span class="math inline">\(\frac{\partial}{\partial w} (w^T a) = a\)</span>, a derivada de <span class="math inline">\(-2w^TX^Ty\)</span> é <strong><span class="math inline">\(-2X^Ty\)</span></strong>.</p></li>
+<li><p>Para formas quadráticas, a regra é <span class="math inline">\(\frac{\partial}{\partial w} (w^TAw) = 2Aw\)</span>. Logo, a derivada de <span class="math inline">\(w^TX^TXw\)</span> é <strong><span class="math inline">\(2X^TXw\)</span></strong>.</p></li>
+</ol>
+<p>Juntando todas as peças, o nosso gradiente é:</p>
+<p><span class="math display">\[ \frac{\partial}{\partial w} SSE(w) = -2X^Ty + 2X^TXw \]</span></p>
+</section>
+<section id="minimização-e-a-equação-normal" class="level3">
+<h3 class="anchored" data-anchor-id="minimização-e-a-equação-normal">Minimização e a Equação Normal</h3>
+<p>Agora, basta aplicar a ideia fundamental da otimização: igualar o gradiente a zero para encontrar o fundo do “vale” da função de custo.</p>
+<p><span class="math display">\[ 0 = -2X^Ty + 2X^TXw \]</span> <span class="math display">\[ 2X^TXw = 2X^Ty \]</span></p>
+<p>Dividindo os dois lados por 2, temos:</p>
+<p><span class="math display">\[ X^TXw = X^Ty \]</span></p>
+<p>Finalmente, para isolar o nosso vetor de pesos ótimos <span class="math inline">\(w\)</span>, multiplicamos ambos os lados da equação pela inversa da matriz <span class="math inline">\((X^TX)\)</span>:</p>
+<p><span class="math display">\[ w = (X^TX)^{-1}X^Ty \]</span></p>
+<p>E esta é a <strong>Equação Normal</strong> da regressão linear. Ela nos dá, de forma direta e analítica, os pesos exatos que minimizam o erro.</p>
+</section>
+</section>
+<section id="dedução-via-probabilidadeesperança" class="level2">
+<h2 class="anchored" data-anchor-id="dedução-via-probabilidadeesperança">Dedução via Probabilidade/Esperança</h2>
+<p>Na seção anterior obtivemos a Equação Normal resolvendo um problema de otimização. Agora vamos chegar ao mesmo resultado partindo de uma interpretação probabilística do modelo linear.</p>
+<section id="o-pressuposto-fundamental" class="level3">
+<h3 class="anchored" data-anchor-id="o-pressuposto-fundamental">O pressuposto fundamental</h3>
+<p>Considere o modelo</p>
+<p><span class="math display">\[
+y = Xw + u,
+\]</span></p>
+<p>onde <span class="math inline">\(u\)</span> é nosso erro, isto é, representa tudo aquilo que não está sendo explicado pelas variáveis observadas em <span class="math inline">\(X\)</span> (Já estamos usando o notation trick e notação matricial). Por definição do nosso modelo <span class="math inline">\(u = y - Xw\)</span></p>
+<p>A hipótese mais importante é que iremos assumir, é:</p>
+<p><span class="math display">\[
+\boxed{E[u\mid X] = 0}.
+\]</span></p>
+<p>Em palavras:</p>
+<blockquote class="blockquote">
+<p>Depois de observarmos os valores de <span class="math inline">\(X\)</span>, o erro continua tendo média zero.</p>
+</blockquote>
+<p>Essa hipótese é mais forte do que simplesmente assumir</p>
+<p><span class="math display">\[
+E[u] = 0.
+\]</span></p>
+<p>De fato,</p>
+<p><span class="math display">\[
+E[u\mid X]=0
+\implies
+E[u]=0,
+\]</span></p>
+<p>mas a recíproca não é verdadeira.</p>
+<hr>
+</section>
+<section id="por-que-assumir-eu-mid-x0" class="level3">
+<h3 class="anchored" data-anchor-id="por-que-assumir-eu-mid-x0">Por que assumir <span class="math inline">\(E[u \mid X]=0\)</span>?</h3>
+<p>A ideia é que toda a estrutura sistemática explicável por <span class="math inline">\(X\)</span> já foi incorporada ao termo <span class="math inline">\(Xw\)</span>.</p>
+<p>Se a média do erro ainda dependesse de <span class="math inline">\(X\)</span>, então existiria informação em <span class="math inline">\(X\)</span> que o modelo não está utilizando.</p>
+<p>Por exemplo, suponha que</p>
+<p><span class="math display">\[
+E[u \mid X=x] = x^2.
+\]</span></p>
+<p>Nesse caso, conhecer <span class="math inline">\(x\)</span> permite prever o erro em média, indicando que o modelo ainda está omitindo uma relação importante.</p>
+<p>A condição</p>
+<p><span class="math display">\[
+E[u\mid X]=0
+\]</span></p>
+<p>formaliza exatamente a ideia de que o erro contém apenas a parte não explicada do fenômeno.</p>
+<hr>
+</section>
+<section id="ortogonalidade-entre-erro-e-variáveis-explicativas" class="level3">
+<h3 class="anchored" data-anchor-id="ortogonalidade-entre-erro-e-variáveis-explicativas">Ortogonalidade entre erro e variáveis explicativas</h3>
+<p>Da propriedade da esperança condicional segue que</p>
+<p><span class="math display">\[
+E[Xu]=0.
+\]</span></p>
+<p>Isso é verdade, pois como ambos são independentes na média, podemos escrever como <span class="math inline">\(E[X]E[u]\)</span>, e como <span class="math inline">\(E[u]=0\)</span>, temos a formula acima</p>
+<p>Substituindo</p>
+<p><span class="math display">\[
+u = y - Xw,
+\]</span></p>
+<p>obtemos</p>
+<p><span class="math display">\[
+E[X(y-Xw)] = 0.
+\]</span></p>
+<p>Expandindo:</p>
+<p><span class="math display">\[
+E[Xy] - E[XX^T]w = 0.  
+\]</span></p>
+<p>Logo,</p>
+<p><span class="math display">\[
+\boxed{
+E[XX^T]w = E[Xy]
+}
+\]</span></p>
+<p>Esta é a versão <strong>populacional</strong> da Equação Normal.</p>
+<hr>
+</section>
+<section id="da-população-para-a-amostra" class="level3">
+<h3 class="anchored" data-anchor-id="da-população-para-a-amostra">Da população para a amostra</h3>
+<p>Até aqui trabalhamos com quantidades populacionais, isto é, esperanças teóricas que normalmente não conhecemos.</p>
+<p>Na prática observamos apenas uma amostra de tamanho <span class="math inline">\(n\)</span>. Assim, substituímos os momentos populacionais pelos seus análogos amostrais:</p>
+<p><span class="math display">\[
+E[Xy]
+\approx
+\frac{1}{n}X^Ty,
+\]</span></p>
+<p>e</p>
+<p><span class="math display">\[
+E[XX^T]
+\approx
+\frac{1}{n}X^TX.
+\]</span></p>
+<p>Substituindo na equação anterior:</p>
+<p><span class="math display">\[
+\frac{1}{n}X^TX\hat{w}
+=
+\frac{1}{n}X^Ty.
+\]</span></p>
+<p>Multiplicando ambos os lados por <span class="math inline">\(n\)</span>:</p>
+<p><span class="math display">\[
+X^TX\hat{w}
+=
+X^Ty.
+\]</span></p>
+<p>Finalmente,</p>
+<p><span class="math display">\[
+\boxed{
+\hat{w}
+=
+(X^TX)^{-1}X^Ty.
+}
+\]</span></p>
+<hr>
+</section>
+</section>
+<section id="comparando-as-duas-deduções" class="level2">
+<h2 class="anchored" data-anchor-id="comparando-as-duas-deduções">Comparando as duas deduções</h2>
+<p>Bom, como viram, na dedução via esperança assumimos explicitamente algo sobre o erro, que ele deve ser independente das variaveis preditoras. Ao passo de que a principio não assumimos nada sobre o erro quando deduzimos via otimização. Entretanto isso não é exatamente verdade</p>
+<p>A ideia fundamental aqui é que Otimizar o Erro Quadrático e Garantir a Premissa de Ortogonalidade são, na verdade, duas faces da mesma moeda. Quando pedimos para um otimizador (como o Gradient Descent) minimizar a distância entre a previsão e o valor real, ele faz isso calculando derivadas. Relembrando, a formula do gradiente:</p>
+<p><span class="math display">\[ \frac{\partial}{\partial w} SSE(w) = -X^Ty + X^TXw \]</span></p>
+<p>E idendica a formula do erro pelo lado da esperança</p>
+<p><span class="math display">\[
+E[Xu] = E[Xy] - E[XX^T]w.
+\]</span></p>
+<p>E nesse momento, o que fizemos com o gradiente na perspectiva da otimização? Igualamos a zero Na perspectiva da otimização, isso apenas nos diz que queremos que o erro seja o menor possivel, e a principio, parece que estamos assumino apenas a condição fraca que a <span class="math inline">\(E[u]=0\)</span>. Porem agora que sabemos que o gradiente é igual ao valor esperado do erro, podemos ver alguma relações interessantes:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\frac{\partial}{\partial w} SSE(w) &amp;= E[-Xu]\\
+\frac{\partial}{\partial w} SSE(w) &amp;= -X^T\hat{u}
+\end{aligned}
+\]</span></p>
+<p>Onde <span class="math inline">\(\hat{u}\)</span> são os residuos (pense nele como os erros concretos, que realmente aconteceram, e não o objeto teorico do erro) Considerando que igualamos <span class="math inline">\(-X^T\hat{u}\)</span> a 0, a unica forma disso ser possivel, é se <span class="math inline">\(X\)</span> e <span class="math inline">\(\hat{u}\)</span> forem ortogonais, isso é, possuirem correlação igual a 0, e caso não saiba, a formula <span class="math inline">\(X^T\hat{u}\)</span> é exatamente a formula da covariância multivarida.</p>
+<p>Abaixo há um grafico interativo, onde ploto uma regressão linear com duas variaveis preditoras <span class="math inline">\(X_1\)</span>, <span class="math inline">\(X_2\)</span> e uma terceira variavel alvo <span class="math inline">\(y\)</span>. Esse espaço vetorial das nossas variaveis nos permite visualizar como existe um espaço de erro pelo simples fato de as variaveis preditoras não conseguirem apontar para a varivel alvo atraves de combinações lineares, dessa forma, podemos ver claramente que o erro é ortogonal as variaveis preditoras</p>
+<div class="cell" data-execution_count="1">
+<div id="fig-ortogonalidade-corrigida-3d" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="1">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ortogonalidade-corrigida-3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div id="fig-ortogonalidade-corrigida-3d-1" class="cell-output cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-ortogonalidade-corrigida-3d-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+        <script>
+        window.PlotlyConfig = {MathJaxConfig: 'local'};
+        if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}
+        </script>
+        <script type="module">import "https://cdn.plot.ly/plotly-3.5.0.min"</script>
+        
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-ortogonalidade-corrigida-3d-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Projeção Ortogonal
+</figcaption>
+</figure>
+</div>
+<div id="fig-ortogonalidade-corrigida-3d-2" class="cell-output cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-ortogonalidade-corrigida-3d-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script>if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.5.0.min.js" integrity="sha256-fHbNLP+GlIXN+efbQec78UkemUz3NJp7UmfGxC1tNxs=" crossorigin="anonymous"></script>                <div id="5214567e-2820-4e65-ba1c-14244bc315db" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("5214567e-2820-4e65-ba1c-14244bc315db")) {                    Plotly.newPlot(                        "5214567e-2820-4e65-ba1c-14244bc315db",                        [{"colorscale":[[0.0,"#440154"],[0.1111111111111111,"#482878"],[0.2222222222222222,"#3e4989"],[0.3333333333333333,"#31688e"],[0.4444444444444444,"#26828e"],[0.5555555555555556,"#1f9e89"],[0.6666666666666666,"#35b779"],[0.7777777777777778,"#6ece58"],[0.8888888888888888,"#b5de2b"],[1.0,"#fde725"]],"name":"Plano X","opacity":0.35,"showscale":false,"x":{"dtype":"f8","bdata":"AAAAAAAA8L8kSZIkSZLkv5AkSZIkSdK\u002fkCRJkiRJsj\u002fctm3btm3bP0qSJEmSJOk\u002fkiRJkiRJ8j8AAAAAAAD4P27btm3btv0\u002fbtu2bdu2AUAlSZIkSZIEQNy2bdu2bQdAkiRJkiRJCkBKkiRJkiQNQAAAAAAAABBAt23btm3b8r+SJEmSJEnqv2zbtm3btt2\u002f4LZt27Ztu78AAAAAAADQP9y2bdu2beM\u002ftm3btm3b7j9JkiRJkiT1P7dt27Zt2\u002fo\u002fkiRJkiRJAEBKkiRJkiQDQAAAAAAAAAZAtm3btm3bCEBu27Zt27YLQCRJkiRJkg5Abtu2bdu29b8AAAAAAADwvyRJkiRJkuS\u002flCRJkiRJ0r+QJEmSJEmyP9y2bdu2bds\u002fSJIkSZIk6T+SJEmSJEnyPwAAAAAAAPg\u002fbtu2bdu2\u002fT9u27Zt27YBQCVJkiRJkgRA27Zt27ZtB0CTJEmSJEkKQEmSJEmSJA1AJEmSJEmS+L+2bdu2bdvyv5EkSZIkSeq\u002fbtu2bdu23b\u002fYtm3btm27vwIAAAAAANA\u002f27Zt27Zt4z+3bdu2bdvuP0qSJEmSJPU\u002fuG3btm3b+j+TJEmSJEkAQEqSJEmSJANAAAAAAAAABkC4bdu2bdsIQG7btm3btgtA3LZt27Zt+79u27Zt27b1v\u002f\u002f\u002f\u002f\u002f\u002f\u002f\u002f++\u002fJUmSJEmS5L+SJEmSJEnSv5gkSZIkSbI\u002f2rZt27Zt2z9JkiRJkiTpP5IkSZIkSfI\u002fAAAAAAAA+D9u27Zt27b9P27btm3btgFAJEmSJEmSBEDctm3btm0HQJIkSZIkSQpAkiRJkiRJ\u002fr8kSZIkSZL4v7Zt27Zt2\u002fK\u002fkyRJkiRJ6r9u27Zt27bdv9i2bdu2bbu\u002f\u002fP\u002f\u002f\u002f\u002f\u002f\u002fzz\u002fbtm3btm3jP7dt27Zt2+4\u002fSpIkSZIk9T+4bdu2bdv6P5MkSZIkSQBASZIkSZIkA0ABAAAAAAAGQLdt27Zt2whAJEmSJEmSAMDbtm3btm37v23btm3btvW\u002fAAAAAAAA8L8kSZIkSZLkv5AkSZIkSdK\u002fkCRJkiRJsj\u002fctm3btm3bP0qSJEmSJOk\u002fkyRJkiRJ8j8BAAAAAAD4P2\u002fbtm3btv0\u002fbtu2bdu2AUAmSZIkSZIEQNy2bdu2bQdAAAAAAAAAAsCSJEmSJEn+vyRJkiRJkvi\u002ft23btm3b8r+SJEmSJEnqv2zbtm3btt2\u002f4LZt27Ztu78AAAAAAADQP9y2bdu2beM\u002fuG3btm3b7j9KkiRJkiT1P7ht27Zt2\u002fo\u002fkiRJkiRJAEBKkiRJkiQDQAAAAAAAAAZA3LZt27ZtA8AkSZIkSZIAwNu2bdu2bfu\u002fbtu2bdu29b8AAAAAAADwvyRJkiRJkuS\u002flCRJkiRJ0r+QJEmSJEmyP9y2bdu2bds\u002fSpIkSZIk6T+TJEmSJEnyPwEAAAAAAPg\u002fbdu2bdu2\u002fT9u27Zt27YBQCRJkiRJkgRAt23btm3bBMAAAAAAAAACwJIkSZIkSf6\u002fJUmSJEmS+L+3bdu2bdvyv5IkSZIkSeq\u002fcNu2bdu23b\u002fgtm3btm27vwAAAAAAANA\u002f3LZt27Zt4z+4bdu2bdvuP0qSJEmSJPU\u002ftm3btm3b+j+TJEmSJEkAQEmSJEmSJANAkiRJkiRJBsDctm3btm0DwCRJkiRJkgDA3LZt27Zt+79u27Zt27b1vwAAAAAAAPC\u002fJkmSJEmS5L+UJEmSJEnSv5AkSZIkSbI\u002f3LZt27Zt2z9KkiRJkiTpP5MkSZIkSfI\u002f\u002f\u002f\u002f\u002f\u002f\u002f\u002f\u002f9z9v27Zt27b9P27btm3btgFAbtu2bdu2B8C3bdu2bdsEwAAAAAAAAALAkyRJkiRJ\u002fr8lSZIkSZL4v7dt27Zt2\u002fK\u002flCRJkiRJ6r9w27Zt27bdv+C2bdu2bbu\u002fAAAAAAAA0D\u002fctm3btm3jP7ht27Zt2+4\u002fSJIkSZIk9T+4bdu2bdv6P5IkSZIkSQBASZIkSZIkCcCSJEmSJEkGwNu2bdu2bQPAJEmSJEmSAMDbtm3btm37v23btm3btvW\u002fAAAAAAAA8L8kSZIkSZLkv5AkSZIkSdK\u002foCRJkiRJsj\u002fgtm3btm3bP0ySJEmSJOk\u002fkiRJkiRJ8j8CAAAAAAD4P27btm3btv0\u002fJUmSJEmSCsBu27Zt27YHwLdt27Zt2wTAAAAAAAAAAsCTJEmSJEn+vyVJkiRJkvi\u002fuG3btm3b8r+UJEmSJEnqv3Dbtm3btt2\u002f4LZt27Ztu78AAAAAAADQP9y2bdu2beM\u002ftG3btm3b7j9KkiRJkiT1P7Zt27Zt2\u002fo\u002fAAAAAAAADMBJkiRJkiQJwJIkSZIkSQbA3LZt27ZtA8AkSZIkSZIAwNu2bdu2bfu\u002fbtu2bdu29b8AAAAAAADwvyRJkiRJkuS\u002fkCRJkiRJ0r+gJEmSJEmyP+C2bdu2bds\u002fSJIkSZIk6T+UJEmSJEnyPwAAAAAAAPg\u002f","shape":"15, 15"},"y":{"dtype":"f8","bdata":"AAAAAAAACMAkSZIkSZIGwEmSJEmSJAXAbtu2bdu2A8CSJEmSJEkCwLdt27Zt2wDAt23btm3b\u002fr8AAAAAAAD8v0mSJEmSJPm\u002fkiRJkiRJ9r\u002fbtm3btm3zvyRJkiRJkvC\u002f3LZt27Zt679s27Zt27blvwAAAAAAAOC\u002fSZIkSZIkBcBu27Zt27YDwJIkSZIkSQLAt23btm3bAMC2bdu2bdv+vwAAAAAAAPy\u002fSZIkSZIk+b+SJEmSJEn2v9u2bdu2bfO\u002fJEmSJEmS8L\u002fatm3btm3rv2zbtm3btuW\u002fAAAAAAAA4L8gSZIkSZLUv5AkSZIkScK\u002fkiRJkiRJAsC2bdu2bdsAwLZt27Zt2\u002f6\u002fAAAAAAAA\u002fL9IkiRJkiT5v5IkSZIkSfa\u002f27Zt27Zt878kSZIkSZLwv9q2bdu2beu\u002fbNu2bdu25b\u002f8\u002f\u002f\u002f\u002f\u002f\u002f\u002ffvyBJkiRJktS\u002fkCRJkiRJwr\u002fAJEmSJEmiP+C2bdu2bcs\u002ft23btm3b\u002fr8AAAAAAAD8v0mSJEmSJPm\u002fkiRJkiRJ9r\u002fctm3btm3zvyRJkiRJkvC\u002f3LZt27Zt679u27Zt27blvwAAAAAAAOC\u002fJEmSJEmS1L+QJEmSJEnCv6AkSZIkSaI\u002f2LZt27Ztyz9MkiRJkiTZP5IkSZIkSeI\u002fSZIkSZIk+b+SJEmSJEn2v9u2bdu2bfO\u002fJEmSJEmS8L\u002fbtm3btm3rv23btm3btuW\u002fAAAAAAAA4L8kSZIkSZLUv5AkSZIkScK\u002foCRJkiRJoj\u002fgtm3btm3LP0ySJEmSJNk\u002fkiRJkiRJ4j8CAAAAAADoP27btm3btu0\u002f27Zt27Zt878kSZIkSZLwv9q2bdu2beu\u002fbdu2bdu25b\u002f+\u002f\u002f\u002f\u002f\u002f\u002f\u002ffvyJJkiRJktS\u002fkCRJkiRJwr+gJEmSJEmiP+C2bdu2bcs\u002fTJIkSZIk2T+UJEmSJEniPwIAAAAAAOg\u002fbtu2bdu27T9v27Zt27bxPyVJkiRJkvQ\u002f3LZt27Zt679u27Zt27blvwAAAAAAAOC\u002fJkmSJEmS1L+UJEmSJEnCv5AkSZIkSaI\u002f2LZt27Ztyz9IkiRJkiTZP5IkSZIkSeI\u002fAAAAAAAA6D9u27Zt27btP27btm3btvE\u002fJEmSJEmS9D\u002fctm3btm33P5IkSZIkSfo\u002fAAAAAAAA4L8kSZIkSZLUv5AkSZIkScK\u002fkCRJkiRJoj\u002fctm3btm3LP0qSJEmSJNk\u002fkiRJkiRJ4j8AAAAAAADoP27btm3btu0\u002fbtu2bdu28T8lSZIkSZL0P9y2bdu2bfc\u002fkiRJkiRJ+j9KkiRJkiT9PwAAAAAAAABAkCRJkiRJwr+gJEmSJEmiP+C2bdu2bcs\u002fSpIkSZIk2T+TJEmSJEniPwEAAAAAAOg\u002fbtu2bdu27T9u27Zt27bxPyVJkiRJkvQ\u002f3LZt27Zt9z+TJEmSJEn6P0qSJEmSJP0\u002fAAAAAAAAAEDctm3btm0BQLdt27Zt2wJA4LZt27Ztyz9MkiRJkiTZP5QkSZIkSeI\u002fAQAAAAAA6D9v27Zt27btP27btm3btvE\u002fJUmSJEmS9D\u002fctm3btm33P5MkSZIkSfo\u002fSpIkSZIk\u002fT8AAAAAAAAAQNy2bdu2bQFAt23btm3bAkCTJEmSJEkEQG7btm3btgVAlCRJkiRJ4j8CAAAAAADoP3Dbtm3btu0\u002fbtu2bdu28T8mSZIkSZL0P9y2bdu2bfc\u002fkyRJkiRJ+j9KkiRJkiT9PwAAAAAAAABA3LZt27ZtAUC4bdu2bdsCQJMkSZIkSQRAbtu2bdu2BUBKkiRJkiQHQCVJkiRJkghAcNu2bdu27T9v27Zt27bxPyZJkiRJkvQ\u002f3LZt27Zt9z+UJEmSJEn6P0qSJEmSJP0\u002fAAAAAAAAAEDctm3btm0BQLht27Zt2wJAkyRJkiRJBEBu27Zt27YFQEqSJEmSJAdAJUmSJEmSCEABAAAAAAAKQNy2bdu2bQtAJEmSJEmS9D\u002fbtm3btm33P5IkSZIkSfo\u002fSJIkSZIk\u002fT8AAAAAAAAAQNu2bdu2bQFAtm3btm3bAkCSJEmSJEkEQG7btm3btgVASZIkSZIkB0AkSZIkSZIIQAAAAAAAAApA27Zt27ZtC0C3bdu2bdsMQJIkSZIkSQ5AlCRJkiRJ+j9LkiRJkiT9PwEAAAAAAABA3LZt27ZtAUC4bdu2bdsCQJMkSZIkSQRAbtu2bdu2BUBKkiRJkiQHQCZJkiRJkghAAQAAAAAACkDctm3btm0LQLht27Zt2wxAkyRJkiRJDkBv27Zt27YPQCVJkiRJkhBAAAAAAAAAAEDctm3btm0BQLdt27Zt2wJAkiRJkiRJBEBu27Zt27YFQEmSJEmSJAdAJEmSJEmSCEAAAAAAAAAKQNy2bdu2bQtAt23btm3bDECSJEmSJEkOQG7btm3btg9AJEmSJEmSEECSJEmSJEkRQAAAAAAAABJA","shape":"15, 15"},"z":{"dtype":"f8","bdata":"ZmZmZmZm9r8d1EEd1EH1v9RBHdRBHfS\u002fi6\u002f4iq\u002f48r9CHdRBHdTxv\u002fmKr\u002fiKr\u002fC\u002fX\u002fEVX\u002fEV77\u002fNzMzMzMzsvzqogzqog+q\u002fqIM6qIM66L8WX\u002fEVX\u002fHlv4M6qIM6qOO\u002f8hVf8RVf4b+84iu+4ivev5iZmZmZmdm\u002fsPiKr\u002fiK879mZmZmZmbyvx3UQR3UQfG\u002f1EEd1EEd8L8WX\u002fEVX\u002fHtv4M6qIM6qOu\u002f8RVf8RVf6b9f8RVf8RXnv8zMzMzMzOS\u002fOqiDOqiD4r+ogzqogzrgvyq+4iu+4tu\u002fB3VQB3VQ17\u002fgK77iK77Sv3jFV3zFV8y\u002f+Iqv+Iqv8L9e8RVf8RXvv8zMzMzMzOy\u002fOqiDOqiD6r+ogzqogzrovxVf8RVf8eW\u002fgzqogzqo47\u002fxFV\u002fxFV\u002fhv7ziK77iK96\u002fmJmZmZmZ2b9zUAd1UAfVv04HdVAHddC\u002fVnzFV3zFx78Q1EEd1EG9vwBf8RVf8aW\u002fhDqogzqo67\u002fyFV\u002fxFV\u002fpv1\u002fxFV\u002fxFee\u002fzczMzMzM5L87qIM6qIPiv6iDOqiDOuC\u002fLL7iK77i278IdVAHdVDXv+IrvuIrvtK\u002ffMVXfMVXzL8yMzMzMzPDv9BBHdRBHbS\u002fQNRBHdRBfb9YB3VQB3WwP\u002fQVX\u002fEVX8E\u002fFl\u002fxFV\u002fx5b+EOqiDOqjjv\u002fEVX\u002fEVX+G\u002fvuIrvuIr3r+ZmZmZmZnZv3RQB3VQB9W\u002fUAd1UAd10L9XfMVXfMXHvxrUQR3UQb2\u002fEF\u002fxFV\u002fxpb8w1EEd1EGdP6CZmZmZmbk\u002fFl\u002fxFV\u002fxxT9k8RVf8RXPP9ZBHdRBHdQ\u002fqIM6qIM64L8rvuIrvuLbvwZ1UAd1UNe\u002f4iu+4iu+0r96xVd8xVfMvzEzMzMzM8O\u002f0kEd1EEdtL\u002fg00Ed1EF9v1YHdVAHdbA\u002f9BVf8RVfwT8+qIM6qIPKP0Qd1EEd1NE\u002fZ2ZmZmZm1j+Or\u002fiKr\u002fjaP7L4iq\u002f4it8\u002fdlAHdVAH1b9RB3VQB3XQv1h8xVd8xce\u002fINRBHdRBvb8aX\u002fEVX\u002fGlvxjUQR3UQZ0\u002flpmZmZmZuT8VX\u002fEVX\u002fHFP1\u002fxFV\u002fxFc8\u002f1EEd1EEd1D\u002f5iq\u002f4iq\u002fYPx7UQR3UQd0\u002foA7qoA7q4D80MzMzMzPjP8ZXfMVXfOU\u002fNDMzMzMzw7\u002fUQR3UQR20vwDUQR3UQX2\u002fUAd1UAd1sD\u002fyFV\u002fxFV\u002fBPzuogzqog8o\u002fQh3UQR3U0T9mZmZmZmbWP4yv+Iqv+No\u002fsPiKr\u002fiK3z\u002fqoA7qoA7iP33FV3zFV+Q\u002fDuqgDuqg5j+iDuqgDuroPzQzMzMzM+s\u002fINRBHdRBnT+cmZmZmZm5Pxhf8RVf8cU\u002fYPEVX\u002fEVzz\u002fVQR3UQR3UP\u002fqKr\u002fiKr9g\u002fHtRBHdRB3T+hDuqgDurgPzQzMzMzM+M\u002fxld8xVd85T9YfMVXfMXnP+ugDuqgDuo\u002ffMVXfMVX7D8Q6qAO6qDuP1EHdVAHdfA\u002fPKiDOqiDyj9DHdRBHdTRP2hmZmZmZtY\u002fjK\u002f4iq\u002f42j+x+Iqv+IrfP+ugDuqgDuI\u002ffcVXfMVX5D8P6qAO6qDmP6IO6qAO6ug\u002fNDMzMzMz6z\u002fGV3zFV3ztP1l8xVd8xe8\u002fdVAHdVAH8T+\u002f4iu+4ivyPwh1UAd1UPM\u002f+oqv+Iqv2D8f1EEd1EHdP6IO6qAO6uA\u002fNDMzMzMz4z\u002fGV3zFV3zlP1l8xVd8xec\u002f66AO6qAO6j99xVd8xVfsPxDqoA7qoO4\u002fUQd1UAd18D+amZmZmZnxP+QrvuIrvvI\u002fLL7iK77i8z92UAd1UAf1P7\u002fiK77iK\u002fY\u002f66AO6qAO4j9+xVd8xVfkPxDqoA7qoOY\u002fog7qoA7q6D80MzMzMzPrP8dXfMVXfO0\u002fWXzFV3zF7z92UAd1UAfxP7\u002fiK77iK\u002fI\u002fCHVQB3VQ8z9RB3VQB3X0P5qZmZmZmfU\u002f4yu+4iu+9j8tvuIrvuL3P3ZQB3VQB\u002fk\u002fV3zFV3zF5z\u002fqoA7qoA7qP3zFV3zFV+w\u002fDuqgDuqg7j9QB3VQB3XwP5mZmZmZmfE\u002f4iu+4iu+8j8svuIrvuLzP3VQB3VQB\u002fU\u002fvuIrvuIr9j8HdVAHdVD3P1AHdVAHdfg\u002fmZmZmZmZ+T\u002fjK77iK776Pyy+4iu+4vs\u002fx1d8xVd87T9afMVXfMXvP3ZQB3VQB\u002fE\u002fv+IrvuIr8j8IdVAHdVDzP1EHdVAHdfQ\u002fmpmZmZmZ9T\u002fkK77iK772Py2+4iu+4vc\u002fdlAHdVAH+T+\u002f4iu+4iv6Pwh1UAd1UPs\u002fUQd1UAd1\u002fD+bmZmZmZn9P+QrvuIrvv4\u002fmpmZmZmZ8T\u002fjK77iK77yPyy+4iu+4vM\u002fdVAHdVAH9T++4iu+4iv2Pwd1UAd1UPc\u002fUAd1UAd1+D+amZmZmZn5P+MrvuIrvvo\u002fLL7iK77i+z91UAd1UAf9P77iK77iK\u002f4\u002fB3VQB3VQ\u002fz+ogzqogzoAQM3MzMzMzABA","shape":"15, 15"},"type":"surface"},{"line":{"color":"#1f77b4","dash":"solid","width":6},"marker":{"color":"#1f77b4","size":4},"mode":"lines+markers","name":"Vetor Base X1","x":[0,1.0],"y":[0,0.5],"z":[0,0.2],"type":"scatter3d"},{"line":{"color":"#1f77b4","dash":"solid","width":6},"marker":{"color":"#1f77b4","size":4},"mode":"lines+markers","name":"Vetor Base X2","x":[0,-0.5],"y":[0,1.0],"z":[0,0.5],"type":"scatter3d"},{"line":{"color":"#2ca02c","dash":"solid","width":6},"marker":{"color":"#2ca02c","size":4},"mode":"lines+markers","name":"Alvo Real (y)","x":[0,1.0],"y":[0,1.5],"z":[0,2.5],"type":"scatter3d"},{"line":{"color":"#9467bd","dash":"solid","width":6},"marker":{"color":"#9467bd","size":4},"mode":"lines+markers","name":"Previsão (y_hat)","x":[0,0.9409090909090908],"y":[0,2.209090909090909],"z":[0,1.0227272727272727],"type":"scatter3d"},{"line":{"color":"#d62728","dash":"dash","width":7},"marker":{"color":"#d62728","size":4},"mode":"lines+markers","name":"Erro (u) - 90°","x":[0.9409090909090908,1.0],"y":[2.209090909090909,1.5],"z":[1.0227272727272727,2.5],"type":"scatter3d"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"scene":{"xaxis":{"nticks":8,"range":[-1.5,3.0],"title":{"text":"Unidades X"}},"yaxis":{"nticks":8,"range":[-1.5,3.0],"title":{"text":"Unidades Y"}},"zaxis":{"nticks":8,"range":[-1.5,3.0],"title":{"text":"Unidades Z"}},"camera":{"eye":{"x":1.5,"y":1.5,"z":1.2}},"aspectmode":"cube"},"margin":{"l":0,"r":0,"b":0,"t":30},"title":{"text":"Rotacione o gráfico para visualizar melhor"},"legend":{"yanchor":"top","y":0.99,"xanchor":"left","x":0.01}},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('5214567e-2820-4e65-ba1c-14244bc315db');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-ortogonalidade-corrigida-3d-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b)
+</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-ortogonalidade-corrigida-3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div>
+</div>
+<p>Com isso podemos ver que na realidade, em ambos os casos estamos assumindo exatamente os mesmos pressupostos, apesar de no início não parecer o caso.</p>
+<p>Um último detalhe interessante, como pudermos ver, não assumimos que o erro é gaussiano para chegar nesse resultado, acredito que muitas pessoas se confundam achando que a premissa de otimizar um modelo lienar com SSE, ou melhor, via a formula normal pressupoem estritamente isso, o que não é verdade. Entretanto, acredito que essa confusão seja devido ao <a href="https://es.wikipedia.org/wiki/Teorema_de_Gauss-M%C3%A1rkov">Teorema de Gauss-Markov</a> que diz que caso o erro possua variância constante, nossa regressão linear é um BLUE (Best Linear Unbiased Estimator), e se assumirmos que todos os erros vem de uma mesma gaussiana, o erro possui variância constante.</p>
+<p>Nota: Existe um outro teorema, chamado <a href="https://en.wikipedia.org/wiki/Rao%E2%80%93Blackwell_theorem">Teorema de Rao-Blackwell</a>, que segundo ele, caso o erro siga uma gaussiana, a formula normal não apenas nos garante um BLUE, como um BUE (Best Unbiased Estimator)</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = true;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/deeplynoted\.net");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

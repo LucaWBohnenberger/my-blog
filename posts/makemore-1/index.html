@@ -206,7 +206,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">February 20, 2026</p>
+        <p class="date-modified">August 11, 2026</p>
       </div>
     </div>
       
@@ -229,7 +229,7 @@ window.Quarto = {
 <section id="brief-summary" class="level2">
 <h2 class="anchored" data-anchor-id="brief-summary">Brief summary</h2>
 <p>In this post, we will implement an Autoregressive Neural Network from scratch, relying solely on the PyTorch tensor class. We assume prior familiarity with Neural Networks; however, if your knowledge feels a bit rusty or you need a refresher, I recommend reading this post beforehand <a href="../../posts/nn-from-scratch-1/index.html">Building Neural Networks from Scratch</a>.</p>
-<p>The main reason for this is to learn how an Autoregressive NN works to generate words, for this, I’m drawing on Andrej Karpathy’s video series about <a href="https://www.youtube.com/watch?v=PaCmpygFfXo&amp;list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ&amp;index=2">makemore</a>, a network capable of creating more words of the same type, so if you train with names, it generates more proper names it generates more words that remember proper names, and so on with anything that is formed by letters.</p>
+<p>The main reason for this is to learn how an Autoregressive NN works to generate words, for this, I’m drawing on Andrej Karpathy’s video series about <a href="https://www.youtube.com/watch?v=PaCmpygFfXo&amp;list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ&amp;index=2">makemore</a>, a network capable of creating more words of the same type, so if you train with names, it generates more proper names it generates more words that resemble proper names, and so on with anything that is formed by letters.</p>
 <p>In this post, I will cover how to make a simple model for our baseline, and how to implement a model with MLP and compare them.</p>
 </section>
 <section id="setup" class="level2">
@@ -238,22 +238,22 @@ window.Quarto = {
 </section>
 <section id="creating-a-baseline" class="level2">
 <h2 class="anchored" data-anchor-id="creating-a-baseline">Creating a baseline</h2>
-<p>In propose of this, it’s just to create the most simple and naive model. It’s important because we need some baseline to compare with our future models, so we will create a model called bigram, the logic is just to look to the last character. Note that you will use just one character of context for our model, and we will consider that the most small part of our word is a character, for models like chatGPT, they don’t use characters, they use combinations of characters similar to syllables.</p>
+<p>In purpose of this, it’s just to create the most simple and naive model. It’s important because we need some baseline to compare with our future models, so we will create a model called bigram, the logic is just to look to the last character. Note that you will use just one character of context for our model, and we will consider that the most small part of our word is a character, for models like chatGPT, they don’t use characters, they use combinations of characters similar to syllables.</p>
 <p>So, to start, we need first import our dataset and PyTorch</p>
-<div id="b879b988" class="cell" data-cache="true" data-execution_count="1">
+<div id="c4f03d49" class="cell" data-cache="true" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a> </span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Basically makes a list of all the names</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> <span class="bu">open</span>(<span class="st">"names.txt"</span>, <span class="st">"r"</span>).read().splitlines() </span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>names[:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="cell-output cell-output-display" data-execution_count="32">
 <pre><code>['emma', 'olivia', 'ava', 'isabella', 'sophia']</code></pre>
 </div>
 </div>
-<p>Most part of models usually can’t handle with characters, so it’s useful to convert this letters in numbers in some way. For this, there are many possibles, but I will use just a simple dictionary to convert them. But we</p>
-<div id="a5f15df0" class="cell" data-cache="true" data-execution_count="2">
+<p>Most part of models usually can’t handle characters, so it’s useful to convert this letters in numbers in some way. For this, there are many possibles, but I will use just a simple dictionary to convert them. But we</p>
+<div id="cee4e5ac" class="cell" data-cache="true" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>chars <span class="op">=</span> <span class="bu">sorted</span>(<span class="bu">list</span>(<span class="bu">set</span>(<span class="st">""</span>.join(names)))) <span class="co"># Creates an ordered list with all letters in our dataset</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>charToInt <span class="op">=</span> {s:i<span class="op">+</span><span class="dv">1</span> <span class="cf">for</span> i,s <span class="kw">in</span> <span class="bu">enumerate</span>(chars)} <span class="co"># Creates a dict to convert chars to int, we add one in the value, because of the bellow line</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>charToInt <span class="op">=</span> {s:i<span class="op">+</span><span class="dv">1</span> <span class="cf">for</span> i,s <span class="kw">in</span> <span class="bu">enumerate</span>(chars)} <span class="co"># Creates a dict to convert chars to int, we add one in the value, because of the below line</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>charToInt[<span class="st">"."</span>] <span class="op">=</span> <span class="dv">0</span> <span class="co"># I will explain later why we need a special character</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(charToInt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -261,15 +261,15 @@ window.Quarto = {
 </div>
 </div>
 <p>Just to get it ready, if we convert to int, so we can read it at the end, we will need an intToChar converter, so let’s get it ready</p>
-<div id="665a1764" class="cell" data-cache="true" data-execution_count="3">
+<div id="d128e023" class="cell" data-cache="true" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>intToChar <span class="op">=</span> {s:i <span class="cf">for</span> i,s <span class="kw">in</span> charToInt.items()}</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(intToChar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>{1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h', 9: 'i', 10: 'j', 11: 'k', 12: 'l', 13: 'm', 14: 'n', 15: 'o', 16: 'p', 17: 'q', 18: 'r', 19: 's', 20: 't', 21: 'u', 22: 'v', 23: 'w', 24: 'x', 25: 'y', 26: 'z', 0: '.'}</code></pre>
 </div>
 </div>
-<p>Know, for our model, we need to calculate the total number that each sequence occurs, like, with we start with letter “a”, how many times occurs that “m” is the next character. And it’s for this that we need and special characters, because we always need something to start, after all, the autoregressive model logic and take the output of the model and put it in its input, so we need an initial input. In our case, we will use “.” as the symbol to start a name/words and to stop word (without a final symbol, it would generate forever). To make more clear, see the code bellow</p>
-<div id="18cbe871" class="cell" data-cache="true" data-execution_count="4">
+<p>Now, for our model, we need to calculate the total number that each sequence occurs, like, if we start with letter “a”, how many times occurs that “m” is the next character. And it’s for this that we need and special characters, because we always need something to start, after all, the autoregressive model logic and take the output of the model and put it in its input, so we need an initial input. In our case, we will use “.” as the symbol to start a name/words and to stop word (without a final symbol, it would generate forever). To make more clear, see the code below</p>
+<div id="26feb4a6" class="cell" data-cache="true" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> torch.zeros((<span class="dv">27</span>,<span class="dv">27</span>)).<span class="bu">int</span>()</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name <span class="kw">in</span> names:</span>
@@ -278,8 +278,8 @@ window.Quarto = {
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        id1, id2 <span class="op">=</span> charToInt[ch1], charToInt[ch2]</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        N[id1, id2] <span class="op">+=</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Basically, this count how often some sequence of characters occurs, like the most common letter sequence is “n” follow by “.”, this mean, that the most commum letter to finish a name in our dataset it’s “n”. If you run with all the names, you can use the code bellow to find the most common occurrences</p>
-<div id="62d75592" class="cell" data-execution_count="5">
+<p>Basically, this count how often some sequence of characters occurs, like the most common letter sequence is “n” follow by “.”, this mean, that the most commum letter to finish a name in our dataset it’s “n”. If you run with all the names, you can use the code below to find the most common occurrences</p>
+<div id="f2843191" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>id1, id2 <span class="op">=</span> (N <span class="op">==</span> N.<span class="bu">max</span>()).nonzero(as_tuple<span class="op">=</span><span class="va">True</span>) <span class="co"># Creates a boolean matrix that only it's True in the max value, than return a tuple where its true</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(intToChar[id1.item()], <span class="st">"--&gt;"</span>, intToChar[id2.item()],<span class="st">"occurs "</span>, N.<span class="bu">max</span>().item())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -287,7 +287,7 @@ window.Quarto = {
 </div>
 </div>
 <p>So let’s see how our bigrams are distributed</p>
-<div id="caf00c6a" class="cell" data-cache="true" data-execution_count="6">
+<div id="95274ec0" class="cell" data-cache="true" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -310,11 +310,11 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>One thing very interesting you can note, it’s that have many combinations that don’t exist, like “bk” or “gc”. This makes it impossible for our model to generate a name with this combination, it is ok to leave it like this, but it would be a good practice to add 1 in all values, thus ensuring that at least there is the minimal possibility of generating a rare sequence</p>
-<div id="143fc0b7" class="cell" data-execution_count="7">
+<p>One thing very interesting you can note, it’s that there are many combinations that don’t exist, like “bk” or “gc”. This makes it impossible for our model to generate a name with this combination, it is ok to leave it like this, but it would be a good practice to add 1 in all values, thus ensuring that at least there is the minimal possibility of generating a rare sequence</p>
+<div id="a7b19823" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> N <span class="op">+</span> <span class="dv">1</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="9a8b2e5a" class="cell" data-cache="true" data-execution_count="8">
+<div id="37577a7a" class="cell" data-cache="true" data-execution_count="8">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -324,11 +324,11 @@ window.Quarto = {
 </div>
 </div>
 <p>So, lets transform our probability matrix</p>
-<div id="3c788db0" class="cell" data-cache="true" data-execution_count="9">
+<div id="3525b52c" class="cell" data-cache="true" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> N</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> P <span class="op">/</span> P.<span class="bu">sum</span>(dim<span class="op">=</span><span class="dv">1</span>, keepdims<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="4ad98cae" class="cell" data-cache="true" data-execution_count="10">
+<div id="043054a9" class="cell" data-cache="true" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -351,8 +351,8 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>Some probabilities stay in 0 because the visualization it’s limited to 3 decimal numbers. Now we already have our model, it’s just our probability matrix P, bellow I will show how to use it.</p>
-<div id="ada5d050" class="cell" data-execution_count="11">
+<p>Some probabilities stay in 0 because the visualization it’s limited to 3 decimal numbers. Now we already have our model, it’s just our probability matrix P, below I will show how to use it.</p>
+<div id="be579e72" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    out <span class="op">=</span> []</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    init <span class="op">=</span> <span class="dv">0</span></span>
@@ -366,20 +366,20 @@ window.Quarto = {
 <span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        init <span class="op">=</span> <span class="bu">id</span></span>
 <span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">""</span>.join(out)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>eimonil
-veasha
-sanowan
-hkema
-prelerocelayunna
-varandum
-zelena
-joh
-ayaiya
-na</code></pre>
+<pre><code>an
+ttyirymorett
+rishoe
+pi
+meladinare
+ja
+pah
+k
+cavivaris
+glaienananasso</code></pre>
 </div>
 </div>
-<p>Not good at all, but it’s correct, with you think the model it’s just saying random letters, see the code bellow, were any letter has the same probability</p>
-<div id="77b3fb5c" class="cell" data-execution_count="12">
+<p>Not good at all, but it’s correct, if you think the model it’s just saying random letters, see the code below, were any letter has the same probability</p>
+<div id="6e642816" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> torch.ones((<span class="dv">27</span>,<span class="dv">27</span>))</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> N</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> P <span class="op">/</span> P.<span class="bu">sum</span>(dim<span class="op">=</span><span class="dv">1</span>, keepdims<span class="op">=</span><span class="va">True</span>)</span>
@@ -397,16 +397,16 @@ na</code></pre>
 <span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>        init <span class="op">=</span> <span class="bu">id</span></span>
 <span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">""</span>.join(out)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>mhdlyhjiavmueetruizvnp
-ffbbyypqbpcztzbhvjfkwhlulp
-uicwgzidulkqe
-b
-rcgmsdzmxxaooykzltbpayzqqbuvpf
-fgtxkzc
-yikbkistfpd
-spukuhhirfpcgeqsatkydamxmpkjfzmhfwplxzniivhhinvhnxsamoebwjaeyalachazikvnejuijthvh
-yoknvmnszdvzbxifisspabbovshzzwfvozfdbtvdizlwowslckhnvcwuwxduzjqmzenucwtiyhrqt
-yrnaegdzfvuifvhobqifoaolknutbm</code></pre>
+<pre><code>ncfn
+vdjjdqoepzab
+ribbxoiwvlrerudhprexxplodpkckqjabgnewwguqaynarkp
+ikwq
+arlfu
+p
+uouqpvhljolb
+esoyrodnjhqlrwttspaviyyfqlukygp
+rzbkmdlhehymlvfqengucsdzlsrivmomj
+yxsecrpdibeipzlbmnpxbcgeqkyxvyubbf</code></pre>
 </div>
 </div>
 </section>
@@ -416,7 +416,7 @@ yrnaegdzfvuifvhobqifoaolknutbm</code></pre>
 <h3 class="anchored" data-anchor-id="the-embedding">The embedding</h3>
 <p>Moving forward, now we need to create our MLP, the basic idea is to create a first layer that is responsible for transforming the characters(or better, the number that represents the character) into an embedding form, and then connect into a normal dense layer. An embedding form is basically a number that represent a word in a vector with multiple numbers. One reason for this is that in this way, the model have a representation in vector space of the letters, so, the vowels probably will be close from each other, and our special character “.” will likely be distant from all other characters. For the model, this mean that de vowels probably can be changed with other vowels without increasing much loss. After create this, will simply connect in a common dense layer and a layer for output.</p>
 <p>First, we need to create a new split of our data, we need X (the decision variables, our context) and Y (the target, the next char)</p>
-<div id="dd02cde4" class="cell" data-execution_count="13">
+<div id="ffedbb40" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>context_size <span class="op">=</span> <span class="dv">3</span> <span class="co"># This is a very important variable, this mean how many characters the model will see to predict next</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>X, Y <span class="op">=</span> [], []</span>
@@ -435,71 +435,71 @@ yrnaegdzfvuifvhobqifoaolknutbm</code></pre>
 </div>
 </div>
 <p>To create our first layer that will embed the integers, it will act like a weight matrix, but without bias (we don’t need bias because it’s redundant, you will see later that we don’t even need to actually perform multiplication).</p>
-<div id="ba82ae62" class="cell" data-execution_count="14">
+<div id="1f46b744" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>emb_dim <span class="op">=</span> <span class="dv">2</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> torch.randn((<span class="dv">27</span>, emb_dim)) <span class="co"># 27 because our vocabulary have 27 words (the char + ".") and 2 because we want to transform each char into a vector with 2 dimensions </span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>C.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="14">
+<div class="cell-output cell-output-display" data-execution_count="45">
 <pre><code>torch.Size([27, 2])</code></pre>
 </div>
 </div>
 <p>Now, to test, we need to multiply the X with C, but the shape doesn’t match</p>
-<div id="da1997ee" class="cell" data-execution_count="15">
+<div id="289421f5" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>X.shape, C.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="15">
+<div class="cell-output cell-output-display" data-execution_count="46">
 <pre><code>(torch.Size([228146, 3]), torch.Size([27, 2]))</code></pre>
 </div>
 </div>
-<p>So, for be able to make the multiplication, we need to make the last dimension of X become 27, this can be achieved by simple putting one hot, but it’s a better way to do that. Bellow there is a multiplication between a one hot vector that represent 5 (“e” in our vocabulary)</p>
-<div id="9bf9ac7b" class="cell" data-execution_count="16">
+<p>So, for be able to make the multiplication, we need to make the last dimension of X become 27, this can be achieved by simple putting one hot, but it’s a better way to do that. below there is a multiplication between a one hot vector that represent 5 (“e” in our vocabulary)</p>
+<div id="102e31ae" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn.functional <span class="im">as</span> F </span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>F.one_hot(torch.tensor(<span class="dv">5</span>), num_classes <span class="op">=</span> <span class="dv">27</span>).<span class="bu">float</span>() <span class="op">@</span> C</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="16">
-<pre><code>tensor([-0.8532,  0.1955])</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="47">
+<pre><code>tensor([-0.7247,  1.3008])</code></pre>
 </div>
 </div>
-<p>Now, see the code bellow</p>
-<div id="d85c2c57" class="cell" data-execution_count="17">
+<p>Now, see the code below</p>
+<div id="d221bd60" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>C[<span class="dv">5</span>], C[[<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>]] </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="17">
-<pre><code>(tensor([-0.8532,  0.1955]),
- tensor([[-0.8532,  0.1955],
-         [-0.5150,  2.7157],
-         [-0.2098,  0.1298]]))</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="48">
+<pre><code>(tensor([-0.7247,  1.3008]),
+ tensor([[-0.7247,  1.3008],
+         [ 2.2947, -1.9208],
+         [-0.7884,  0.8301]]))</code></pre>
 </div>
 </div>
 <p>Basically, multiply by a one hot vector, it’s pick up the specific row, so, to solve our multiplication problem, we don’t need to transform all the last dimension of X with one_hot encoding, we can just use X like an index for C.</p>
-<div id="cdcfdb4b" class="cell" data-execution_count="18">
+<div id="999859ec" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>emb <span class="op">=</span> C[X] </span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>emb.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="18">
+<div class="cell-output cell-output-display" data-execution_count="49">
 <pre><code>torch.Size([228146, 3, 2])</code></pre>
 </div>
 </div>
-<p>The first dimension represent the inputs, the second is the size of our context, and the last is the value in the embedding. To clarify, the code bellow, pick up the embedding value of the letter in the second position in the context for the sixth prediction</p>
-<div id="23bfe25c" class="cell" data-execution_count="19">
+<p>The first dimension represent the inputs, the second is the size of our context, and the last is the value in the embedding. To clarify, the code below, pick up the embedding value of the letter in the second position in the context for the sixth prediction</p>
+<div id="ed75c8c4" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>emb[<span class="dv">5</span>][<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="19">
-<pre><code>tensor([-0.3535, -1.7103])</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="50">
+<pre><code>tensor([0.0794, 0.5860])</code></pre>
 </div>
 </div>
 </section>
 <section id="the-deep-layers-and-the-train" class="level3">
 <h3 class="anchored" data-anchor-id="the-deep-layers-and-the-train">The Deep Layers and the Train</h3>
-<p>Going further, since we now have our chars represented in an embedding form, just create the deep layers; But we have another problem in the dimensions of matrix, see bellow</p>
-<div id="10ef4219" class="cell" data-execution_count="20">
+<p>Going further, since we now have our chars represented in an embedding form, just create the deep layers; But we have another problem in the dimensions of matrix, see below</p>
+<div id="158fd5ed" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>emb.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="20">
+<div class="cell-output cell-output-display" data-execution_count="51">
 <pre><code>torch.Size([228146, 3, 2])</code></pre>
 </div>
 </div>
-<p>In deep learning, it’s always matrix multiplications between layers, now we want to do one with embedding layer and some weight matrix W1, like bellow: <span class="math display">\[ \sigma(\mathbf{emb} \mathbf{W}_1 + \mathbf{b}_1) \]</span></p>
-<p>Since <span class="math inline">\(W_1\)</span> is a matrix, emb also needs to be one, so we can perform standard deep learning operations. We can use several PyTorch functions for this, like reshape, but the most efficient is view. This is because view doesn’t change the underlying data in memory; it just changes how the tensor is read. See bellow how this works:</p>
-<div id="1851f5c9" class="cell" data-execution_count="21">
+<p>In deep learning, it’s always matrix multiplications between layers, now we want to do one with embedding layer and some weight matrix W1, like below: <span class="math display">\[ \sigma(\mathbf{emb} \mathbf{W}_1 + \mathbf{b}_1) \]</span></p>
+<p>Since <span class="math inline">\(W_1\)</span> is a matrix, emb also needs to be one, so we can perform standard deep learning operations. We can use several PyTorch functions for this, like reshape, but the most efficient is view. This is because view doesn’t change the underlying data in memory; it just changes how the tensor is read. See below how this works:</p>
+<div id="00b7f465" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> torch.tensor(( ((<span class="dv">1</span>,<span class="dv">2</span>), (<span class="dv">3</span>,<span class="dv">4</span>)), ((<span class="dv">5</span>,<span class="dv">6</span>), (<span class="dv">7</span>,<span class="dv">8</span>)), ((<span class="dv">9</span>,<span class="dv">10</span>), (<span class="dv">11</span>,<span class="dv">12</span>)) ))</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>B.shape, B, B.view((<span class="op">-</span><span class="dv">1</span>,<span class="dv">3</span>)), B.view((<span class="op">-</span><span class="dv">1</span>,<span class="dv">3</span>)).shape </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="21">
+<div class="cell-output cell-output-display" data-execution_count="52">
 <pre><code>(torch.Size([3, 2, 2]),
  tensor([[[ 1,  2],
           [ 3,  4]],
@@ -517,17 +517,17 @@ yrnaegdzfvuifvhobqifoaolknutbm</code></pre>
 </div>
 </div>
 <p>PyTorch reads in order from the last dimension in the tensor, and just will pack the elements in the quantity you ask. By applying this we do this with the emb, our objective is to create a dimension with all the context, basically each row will be a complete context:</p>
-<div id="e526a294" class="cell" data-execution_count="22">
+<div id="2b6a9100" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>emb[<span class="dv">0</span>], emb[<span class="dv">0</span>].view(<span class="op">-</span><span class="dv">1</span>, context_size<span class="op">*</span>emb_dim) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="22">
-<pre><code>(tensor([[-0.3535, -1.7103],
-         [-0.3535, -1.7103],
-         [-0.3535, -1.7103]]),
- tensor([[-0.3535, -1.7103, -0.3535, -1.7103, -0.3535, -1.7103]]))</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="53">
+<pre><code>(tensor([[0.0794, 0.5860],
+         [0.0794, 0.5860],
+         [0.0794, 0.5860]]),
+ tensor([[0.0794, 0.5860, 0.0794, 0.5860, 0.0794, 0.5860]]))</code></pre>
 </div>
 </div>
-<p>Now we can build the other layers like bellow</p>
-<div id="31c62550" class="cell" data-execution_count="23">
+<p>Now we can build the other layers like below</p>
+<div id="ffb47d44" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>W1 <span class="op">=</span> torch.randn((context_size<span class="op">*</span>emb_dim, <span class="dv">100</span>)) <span class="co"># The first row is to be possible the multiplication, and the second it's the number of neurons</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>b1 <span class="op">=</span> torch.randn(<span class="dv">100</span>)</span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>W2 <span class="op">=</span> torch.randn((<span class="dv">100</span>, <span class="dv">27</span>)) <span class="co"># It's important that we return have the last dimension equal to the length of our vocabulary, for be possible to use some loss function comparing the predicted terms with the original ones</span></span>
@@ -537,55 +537,55 @@ yrnaegdzfvuifvhobqifoaolknutbm</code></pre>
 <span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>h <span class="op">=</span> torch.relu(emb.view(<span class="op">-</span><span class="dv">1</span>, W1.shape[<span class="dv">0</span>]) <span class="op">@</span> W1 <span class="op">+</span> b1)</span>
 <span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>logits <span class="op">=</span> torch.relu(h <span class="op">@</span> W2 <span class="op">+</span> b2)</span>
 <span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>logits[:<span class="dv">3</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="23">
-<pre><code>tensor([[16.8073,  0.0000,  0.0000, 36.5391,  4.4006,  0.0000,  0.0000,  3.9556,
-         12.7098, 23.6753,  0.0000, 20.1377,  0.0000,  7.7264,  0.0000,  0.0000,
-          8.3133, 14.1432, 47.3022,  0.0000,  0.0000,  0.0000,  0.0000, 20.7312,
-         12.6047,  0.0000,  0.0000],
-        [11.6699,  0.0000,  0.0000, 16.4833,  0.0000,  0.0000,  0.0000, 13.2102,
-          0.8230, 34.8969,  0.0000, 15.8145,  0.0000, 19.4077,  0.0000,  0.0000,
-         13.9951, 16.6984, 38.3562,  0.0000,  0.0000,  0.0000,  0.0000, 17.7473,
-         26.5010,  0.0000,  0.0000],
-        [ 0.0000,  0.0000,  0.0000, 18.8868,  5.0384,  0.0000,  0.0000, 11.5155,
-          5.5194, 20.6613,  0.0000, 25.1028,  3.4860, 11.4154,  0.0000,  0.0000,
-          0.0000, 21.3071,  9.8761,  2.5993,  0.0000,  0.0000,  0.0000, 14.2439,
-          1.4699,  0.0000,  0.0000]])</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="54">
+<pre><code>tensor([[ 0.0000, 19.4494,  0.0000,  0.0000,  0.0000, 13.5259,  0.0000,  0.0000,
+          0.0000,  0.3754,  0.0000, 15.0779,  0.0000,  3.9875, 22.5124,  0.0000,
+          0.0000,  0.0000,  3.5872,  6.3738,  0.0000, 12.9481,  1.1566,  0.0000,
+          0.0000,  0.0000,  0.0000],
+        [ 0.0000, 19.3482,  0.9336,  0.0000,  0.0000,  9.8531,  0.0000,  0.0000,
+          0.0000, 12.6878,  0.0000, 17.6782,  0.0000, 11.3464, 18.1127,  3.1843,
+          0.0000,  0.0000, 11.7951,  2.8019,  0.0000,  8.9295, 13.6857,  0.0000,
+          0.0000,  0.0000,  0.0000],
+        [ 0.0000, 18.4656,  8.1224,  0.0000,  2.6446, 25.1985, 18.4467, 21.1813,
+          0.0000,  0.0000,  0.0000, 45.2228,  0.0000, 27.6953, 34.0277,  0.0000,
+          0.0000,  3.6034,  0.0000, 16.4781, 13.4579, 12.0611,  0.0000,  0.0000,
+          0.0000,  0.0000,  0.0000]])</code></pre>
 </div>
 </div>
 <p>Note that the initial logits are completely random, because the neural network is untrained, to do this we need a way to compute the loss, at this stage, the standard approach is, is with softmax and cross entropy. Softmax is basically a function that turns a vector of real numbers into probabilities, making it much easier to compute derivatives. It is defined by the following expression: <span class="math display">\[ \text{Softmax}(z_i) = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}} \]</span></p>
 <p>And cross entropy is just a negative sum for all log probabilities that matches with the true label <span class="math display">\[ L_{CE} = -\sum_{i=1}^{C} y_i \log(\hat{y}_i) \]</span></p>
-<p>To do softmax in PyTorch, see the code bellow</p>
-<div id="4cca87a4" class="cell" data-execution_count="24">
+<p>To do softmax in PyTorch, see the code below</p>
+<div id="299e3749" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> torch.tensor(((<span class="dv">1</span>,<span class="dv">2</span>), (<span class="dv">2</span>,<span class="dv">2</span>)))</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>counts <span class="op">=</span> A.exp()</span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>probs <span class="op">=</span> counts <span class="op">/</span> counts.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>, keepdims<span class="op">=</span><span class="va">True</span>) <span class="co"># Axis = 1 tell to PyTorch to compute the sum belong the columns</span></span>
 <span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>probs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="24">
+<div class="cell-output cell-output-display" data-execution_count="55">
 <pre><code>tensor([[0.2689, 0.7311],
         [0.5000, 0.5000]])</code></pre>
 </div>
 </div>
 <p>Note that the <em>keepdims = True</em> is <strong><em>necessary</em></strong>, with you don’t put it, see what happens</p>
-<div id="3f3eb7b6" class="cell" data-execution_count="25">
+<div id="4d9ba20d" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>probs <span class="op">=</span> counts <span class="op">/</span> counts.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>) </span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>probs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="25">
+<div class="cell-output cell-output-display" data-execution_count="56">
 <pre><code>tensor([[0.2689, 0.5000],
         [0.7311, 0.5000]])</code></pre>
 </div>
 </div>
 <p>This occurs because of PyTorch’s broadcast system, which aligns the two tensors from right to left, with the last dimensions matching; PyTorch simply replicates these values along other axes. Going to the cross-entropy, we just need to sum the log probabilities with the larger probability in a vector, which is the probability that predicts the correct value.</p>
-<div id="6da6c9cd" class="cell" data-execution_count="26">
+<div id="a8de49ed" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>probs <span class="op">=</span> counts <span class="op">/</span> counts.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>, keepdims<span class="op">=</span><span class="va">True</span>) </span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> torch.tensor((<span class="dv">0</span>,<span class="dv">1</span>)) <span class="co"># The correct value is represents by the index like in our vocabulary, the first row the correct is the index 0, but our model predict index 1</span></span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> <span class="op">-</span>probs[torch.arange(A.shape[<span class="dv">0</span>]), values].log().<span class="bu">sum</span>() <span class="co"># Just pick all rows and the column in values</span></span>
 <span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>loss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="26">
+<div class="cell-output cell-output-display" data-execution_count="57">
 <pre><code>tensor(2.0064)</code></pre>
 </div>
 </div>
-<p>If we do this with our logits, it will be correct, but PyTorch offers a better way to do softmax cross-entropy. PyTorch makes all these three lines without create intermediates tensors and applies a technique to make it more numerically stable.</p>
-<div id="5b50b1ad" class="cell" data-execution_count="27">
+<p>If we do this with our logits, it will be correct, but PyTorch offers a better way to do softmax cross-entropy. PyTorch does all these three lines without create intermediates tensors and applies a technique to make it more numerically stable.</p>
+<div id="1c54d5a8" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> torch.tensor([<span class="op">-</span><span class="dv">5</span>,<span class="op">-</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">100</span>]) </span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> torch.tensor([<span class="op">-</span><span class="dv">5</span>,<span class="op">-</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">100</span>]) <span class="op">-</span> <span class="dv">100</span></span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> torch.tensor([<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">5</span>])</span>
@@ -604,23 +604,23 @@ yrnaegdzfvuifvhobqifoaolknutbm</code></pre>
 <span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>probs4 <span class="op">=</span> counts4 <span class="op">/</span> counts4.<span class="bu">sum</span>()</span>
 <span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a> </span>
 <span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>probs1, probs2, probs3, probs4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="27">
+<div class="cell-output cell-output-display" data-execution_count="58">
 <pre><code>(tensor([0., 0., 0., nan]),
  tensor([0.0000e+00, 1.4013e-45, 3.7835e-44, 1.0000e+00]),
  tensor([0.0171, 0.0466, 0.9362]),
  tensor([0.0171, 0.0466, 0.9362]))</code></pre>
 </div>
 </div>
-<p>As you can see in C and D, subtracting a number from a tensor before applying the softmax doesn’t change the results. But our computer struggles to hands with a bigger number when we perform exp function, so the trick it’s subtract the bigger value from the vector. Finally, we can now apply this in our logits with the native function in PyTorch</p>
-<div id="153430e9" class="cell" data-execution_count="28">
+<p>As you can see in C and D, subtracting a number from a tensor before applying the softmax doesn’t change the results. But our computer struggles to handle a bigger number when we perform exp function, so the trick it’s subtract the bigger value from the vector. Finally, we can now apply this in our logits with the native function in PyTorch</p>
+<div id="d24a72bc" class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> F.cross_entropy(logits, Y)</span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>loss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="28">
-<pre><code>tensor(26.4711)</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="59">
+<pre><code>tensor(28.1133)</code></pre>
 </div>
 </div>
 <p>Now we just need to put all these together and make a train loop</p>
-<div id="8007e4b3" class="cell" data-cache="true" data-execution_count="29">
+<div id="6a5995f3" class="cell" data-cache="true" data-execution_count="29">
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>emb_dim <span class="op">=</span> <span class="dv">2</span></span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> torch.randn((<span class="dv">27</span>, emb_dim))</span>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>W1 <span class="op">=</span> torch.randn((context_size<span class="op">*</span>emb_dim, <span class="dv">100</span>))</span>
@@ -650,13 +650,13 @@ yrnaegdzfvuifvhobqifoaolknutbm</code></pre>
 <span id="cb50-27"><a href="#cb50-27" aria-hidden="true" tabindex="-1"></a>        p.data <span class="op">-=</span> lr<span class="op">*</span>p.grad</span>
 <span id="cb50-28"><a href="#cb50-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb50-29"><a href="#cb50-29" aria-hidden="true" tabindex="-1"></a>loss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="29">
-<pre><code>tensor(2.5312, grad_fn=&lt;NllLossBackward0&gt;)</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="60">
+<pre><code>tensor(2.5337, grad_fn=&lt;NllLossBackward0&gt;)</code></pre>
 </div>
 </div>
-<p>With you doesn’t understand the code above very well, check this other post <a href="../../posts/nn-from-scratch-1/index.html">Building Neural Networks from Scratch</a></p>
-<p>Now, let’s test this new model. The code bellow generates 20 random names</p>
-<div id="aa5e908e" class="cell" data-cache="true" data-execution_count="30">
+<p>If you doesn’t understand the code above very well, check this other post <a href="../../posts/nn-from-scratch-1/index.html">Building Neural Networks from Scratch</a></p>
+<p>Now, let’s test this new model. The code below generates 20 random names</p>
+<div id="32fceb8a" class="cell" data-cache="true" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">20</span>):</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>    out <span class="op">=</span> []</span>
@@ -675,29 +675,29 @@ yrnaegdzfvuifvhobqifoaolknutbm</code></pre>
 <span id="cb52-16"><a href="#cb52-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb52-17"><a href="#cb52-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">''</span>.join(intToChar[it] <span class="cf">for</span> it <span class="kw">in</span> out))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>dal.
-masty.
-hmit.
-nakeyuru.
-aafaauaeunhlanislemr.
-mos.
-uesharafaiten.
-jaanob.
-tisn.
-vorin.
-tkatu.
-dinlesarso.
-haleno.
-tle.
-karrin.
-kraresa.
-ar.
-ejolun.
-urin.
-slinsaeu.</code></pre>
+<pre><code>aryesnillunhan.
+cnyrcasa.
+igadi.
+larleem.
+gremaro.
+davi.
+arm.
+ael.
+say.
+veve.
+zyen.
+ragdaylve.
+rraliancmasaaa.
+muresa.
+dienndi.
+onmhn.
+glaupielainajdinco.
+jifesiele.
+rador.
+.</code></pre>
 </div>
 </div>
-<p>You probably noticed that the loss in our neural network is worse than the baseline model, so, why have all this trouble? This trouble worth because the advantage of this approach in relation to the baseline, it’s the fact you can improve this model just by increasing the context_size, the embedding dim, adding more layers.</p>
+<p>You probably noticed that the loss in our neural network is worse than the baseline model, so, why have all this trouble? This trouble worth because the advantage of this approach compared to to the baseline, it’s the fact you can improve this model just by increasing the context_size, the embedding dim, adding more layers.</p>
 <p>But it’s your work improve these model by tuning the hyperparameters. So, this is some exercise:</p>
 <ol type="1">
 <li><p>Change the code in baseline to have some loss to compare with the neural network (Tip: You can use Negative Log-Likelihood)</p></li>
@@ -706,8 +706,8 @@ slinsaeu.</code></pre>
 </section>
 <section id="visualizing-the-embeddings" class="level3">
 <h3 class="anchored" data-anchor-id="visualizing-the-embeddings">Visualizing the embeddings</h3>
-<p>We already have a full trained neural network, these mean that the first layer (the embedding layer) is already trained. The code bellow shows us how our model understand the letters for this task (only work with emb_dim = 2)</p>
-<div id="9fd30d58" class="cell" data-execution_count="31">
+<p>We already have a full trained neural network, these mean that the first layer (the embedding layer) is already trained. The code below shows us how our model understand the letters for this task (only work with emb_dim = 2)</p>
+<div id="b2a34f7c" class="cell" data-execution_count="31">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">8</span>))</span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>plt.scatter(C[:,<span class="dv">0</span>].data, C[:, <span class="dv">1</span>].data, s<span class="op">=</span><span class="dv">200</span>)</span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(C.shape[<span class="dv">0</span>]):</span>
@@ -715,7 +715,7 @@ slinsaeu.</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/cell-32-output-1.png" width="652" height="633" class="figure-img"></p>
+<p><img src="index_files/figure-html/cell-32-output-1.png" width="653" height="633" class="figure-img"></p>
 </figure>
 </div>
 </div>
